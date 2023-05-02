@@ -2,6 +2,7 @@
 CREATE TABLE cart (
     users_id INT NOT NULL,
     products_id INT NOT NULL,
+    quantity INT(12) NOT NULL,
     FOREIGN KEY (users_id) REFERENCES users(id),
     FOREIGN KEY (products_id) REFERENCES products(id)
 );
