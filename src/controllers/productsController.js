@@ -2,7 +2,7 @@ const productsService = require('../services/productsService');
 
 const getAllProducts = async (req, res) => {
   try {
-    const { limit, offset } = req.query;
+    const { limit = 6, offset = 0 } = req.query;
     const products = await productsService.getAllProducts(limit, offset);
     res.status(200).json(products);
   } catch (err) {

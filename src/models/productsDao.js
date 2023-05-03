@@ -19,7 +19,7 @@ const getAllProducts = async (limit, offset) => {
       INNER JOIN categories ON categories.id = products.categories_id
       LIMIT ? OFFSET ?;
       `,
-      [parseInt(limit), parseInt(offset)] // Parse limit and offset to integers
+      [parseInt(limit), parseInt(offset)]
     );
     return rows;
   } catch (err) {
