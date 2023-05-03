@@ -3,11 +3,13 @@ require("dotenv").config();
 const logger = require('morgan');
 const express = require('express');
 const cors = require('cors');
-const { dataSource } = require('./src/models/dataSource');
+const dataSource = require('./src/models/dataSource');
+const router = require("./src/routes/index");
 
 
 const app = express();
 
+app.use(router)
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
