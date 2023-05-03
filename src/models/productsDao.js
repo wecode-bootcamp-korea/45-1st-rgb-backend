@@ -27,9 +27,9 @@ const getAllProducts = async (limit, offset) => {
   }
 };
 
-const getSpecificProducts = async (productsId) => {
+const getProduct = async (productsId) => {
   try {
-    const getSpecificProducts = await dataSource.query(
+    const [product] = await dataSource.query(
       `SELECT 
       products.id,
       products.categories_id,
@@ -48,7 +48,7 @@ const getSpecificProducts = async (productsId) => {
       [productsId]
     );
 
-    return getSpecificProducts;
+    return product;
   } catch (error) {
     throw new Error("Error has occurred in getting Specific Products /productsDao");
   }
@@ -56,6 +56,6 @@ const getSpecificProducts = async (productsId) => {
 
 
 module.exports = {
-  getAllProducts, getSpecificProducts
+  getAllProducts, getProduct
 }
 

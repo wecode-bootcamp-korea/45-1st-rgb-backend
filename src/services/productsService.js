@@ -9,16 +9,20 @@ const getAllProducts = async (limit, offset) => {
   }
 };
 
-const getSpecificProducts = async (productsId) => {
+const getProduct = async (productsId) => {
   try {
-    const products = await productsDao.getSpecificProducts(productsId);
-    return products;
+    if (!productsId) {
+      return res.status(404).json({ message: 'PRODUCTS_NOT_FOUND' });
+    }
+    const product = await productsDao.getProduct(productsId);
+    return product;
   } catch (err) {
     throw new Error("Error has occurred in getting Specific Products /productService/getSpecificProducts");
   }
 };
 
+
 module.exports = {
-  getAllProducts, getSpecificProducts
+  getAllProducts, getProduct
 }
 

@@ -11,16 +11,12 @@ const getAllProducts = async (req, res) => {
   }
 };
 
-const getSpecificProducts = async (req, res) => {
+const getProduct = async (req, res) => {
   try {
     const productsId = req.params.productsId;
-    if (!productsId) {
-      return res.status(400).json({ message: 'PRODUCTS_NOT_FOUND' });
-    }
+    const product = await productsService.getProduct(productsId);
 
-    const products = await productsService.getSpecificProducts(productsId);
-
-    return res.status(200).json(products);
+    return res.status(200).json(product);
   } catch (err) {
     return res.status(400).json({ message: "Error has occurred in getting Specific Products /productController" });
   }
@@ -28,5 +24,5 @@ const getSpecificProducts = async (req, res) => {
 
 
 module.exports = {
-  getAllProducts, getSpecificProducts
+  getAllProducts, getProduct
 }
