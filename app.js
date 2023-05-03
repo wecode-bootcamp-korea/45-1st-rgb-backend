@@ -4,7 +4,7 @@ const logger = require("morgan");
 const express = require("express");
 const cors = require("cors");
 const dataSource = require("./src/models/dataSource");
-const routes = require("../45-1st-rgb-backend/src/routes");
+const routes = require("./src/routes");
 
 const app = express();
 

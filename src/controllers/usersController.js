@@ -1,4 +1,5 @@
 const userService = require("../services/usersService");
+const points = process.env.POINTS;
 
 const signUp = async (req, res) => {
   try {
@@ -7,7 +8,7 @@ const signUp = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
-    const points = process.env.POINTS;
+
     await userService.signUp(email, password, points);
     return res.status(201).json({ message: "SUCCESS_SIGNUP" });
   } catch (err) {
