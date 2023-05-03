@@ -16,12 +16,14 @@ const getAllProducts = async () => {
       products.material,
       products.quantity,
       products.max_quantity
-      FROM products LIMIT 6 OFFSET 0
-      INNER JOIN categories ON categories.id = products.categories_id;
-      `
+    FROM products 
+    INNER JOIN categories ON categories.id = products.categories_id
+    LIMIT 6 OFFSET 0;
+    `
     );
     return rows;
   } catch (err) {
+    console.error(err);
     throw new Error("Error has occurred in getting All Products /productDao");
   }
 };
