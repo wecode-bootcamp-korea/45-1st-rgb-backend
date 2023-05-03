@@ -2,7 +2,6 @@ const dataSource = require("./dataSource");
 
 const signUp = async (email, password, points) => {
   try {
-    console.log(password + "" + "DAo");
     await dataSource.query(
       `INSERT INTO users(
         email,
