@@ -1,4 +1,4 @@
-const productsService = require('../services/productsService');
+const productsService = require("../services/productsService");
 
 const getAllProducts = async (req, res) => {
   try {
@@ -7,7 +7,12 @@ const getAllProducts = async (req, res) => {
     res.status(200).json(products);
   } catch (err) {
     console.log(err);
-    res.status(400).json({ message: "Error has occurred in getting All Products /productController" });
+    res
+      .status(400)
+      .json({
+        message:
+          "Error has occurred in getting All Products /productController",
+      });
   }
 };
 

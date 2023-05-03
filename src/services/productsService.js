@@ -1,4 +1,4 @@
-const productsDao = require('../models/productsDao')
+const productsDao = require("../models/productsDao");
 
 const getAllProducts = async (limit, offset) => {
   try {
