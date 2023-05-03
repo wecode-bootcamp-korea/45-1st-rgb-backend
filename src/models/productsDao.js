@@ -27,8 +27,35 @@ const getAllProducts = async (limit, offset) => {
   }
 };
 
+const getSpecificProducts = async (productsId) => {
+  try {
+    const getSpecificProducts = await dataSource.query(
+      `SELECT 
+      products.id,
+      products.categories_id,
+      products.artist_name,
+      products.title,
+      products.description,
+      products.products_size_left,
+      products.products_size_right,
+      products.price,
+      products.material,
+      products.quantity,
+      products.max_quantity
+      FROM products
+      WHERE products.id = ?
+      `,
+      [productsId]
+    );
+
+    return getSpecificProducts;
+  } catch (error) {
+    throw new Error("Error has occurred in getting Specific Products /productsDao");
+  }
+};
+
 
 module.exports = {
-  getAllProducts,
+  getAllProducts, getSpecificProducts
 }
 
