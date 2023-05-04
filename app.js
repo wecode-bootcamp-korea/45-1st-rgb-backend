@@ -8,7 +8,6 @@ const routes = require("./src/routes");
 
 const app = express();
 
-app.use(router);
 app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
