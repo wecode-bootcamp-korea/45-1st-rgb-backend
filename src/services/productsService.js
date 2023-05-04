@@ -9,12 +9,13 @@ const getAllProducts = async (limit, offset) => {
   }
 };
 
-const getProduct = async (productsId) => {
+const getProduct = async (productId) => {
   try {
-    if (!productsId) {
+    const product = await productsDao.getProduct(productId);
+
+    if (!product) {
       return res.status(404).json({ message: 'PRODUCTS_NOT_FOUND' });
     }
-    const product = await productsDao.getProduct(productsId);
     return product;
   } catch (err) {
     throw new Error("Error has occurred in getting Specific Products /productService/getSpecificProducts");

@@ -27,7 +27,7 @@ const getAllProducts = async (limit, offset) => {
   }
 };
 
-const getProduct = async (productsId) => {
+const getProduct = async (productId) => {
   try {
     const [product] = await dataSource.query(
       `SELECT 
@@ -45,7 +45,7 @@ const getProduct = async (productsId) => {
       FROM products
       WHERE products.id = ?
       `,
-      [productsId]
+      [productId]
     );
 
     return product;
