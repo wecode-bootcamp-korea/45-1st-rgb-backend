@@ -54,8 +54,22 @@ const getProduct = async (productId) => {
   }
 };
 
+const getProductsImage = async (productsImageId) => {
+  try {
+    const getProductsImage = await dataSource.query(
+      `SELECT image_url
+      FROM products_images
+      WHERE products_id = ?`,
+      [productsImageId]
+    );
+    return getProductsImage;
+  } catch (err) {
+    console.log(err);
+    throw new Error("Error has occurred in getting Products Images /productsDao");
+  }
+}
 
 module.exports = {
-  getAllProducts, getProduct
+  getAllProducts, getProduct, getProductsImage
 }
 
