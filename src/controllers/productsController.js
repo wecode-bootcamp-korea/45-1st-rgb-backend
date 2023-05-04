@@ -16,6 +16,18 @@ const getAllProducts = async (req, res) => {
   }
 };
 
-module.exports = {
-  getAllProducts,
+const getProduct = async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const product = await productsService.getProduct(productId);
+
+    return res.status(200).json(product);
+  } catch (err) {
+    return res.status(400).json({ message: "Error has occurred in getting Specific Products /productController" });
+  }
 };
+
+
+module.exports = {
+  getAllProducts, getProduct
+}

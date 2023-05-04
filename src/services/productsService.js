@@ -5,13 +5,24 @@ const getAllProducts = async (limit, offset) => {
     const products = await productsDao.getAllProducts(limit, offset);
     return products;
   } catch (err) {
-    console.log(err);
-    throw new Error(
-      "Error has occurred in getting All Products /productService/getAllProducts"
-    );
+    throw new Error("Error has occurred in getting All Products /productService/getAllProducts")
   }
 };
 
-module.exports = {
-  getAllProducts,
+const getProduct = async (productId) => {
+  try {
+    const product = await productsDao.getProduct(productId);
+
+    if (!product) {
+      return res.status(404).json({ message: 'PRODUCTS_NOT_FOUND' });
+    }
+    return product;
+  } catch (err) {
+    throw new Error("Error has occurred in getting Specific Products /productService/getSpecificProducts");
+  }
 };
+
+
+module.exports = {
+  getAllProducts, getProduct
+}
