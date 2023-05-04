@@ -36,21 +36,17 @@ const logIn = async (email, password) => {
   await pwValidationCheck(password);
   await emailValidationCheck(email);
 
-  const [info] = await usersDao.logIn(email);
+  const user = await usersDao.getUserByEmail(email);
 
-  if (!info) throw new Error("INVALID_EMAIL_OR_PASSWORD");
+  if (!user) throw new Error("INVALID_EMAIL_OR_PASSWORD");
 
-  const check = await bcrypt.compare(password, info.password);
+  const checkPassword = await bcrypt.compare(password, user.password);
 
-  if (!check) throw new Error("INVALID_EMAIL_OR_PASSWORD");
+  if (!checkPassword) throw new Error("INVALID_EMAIL_OR_PASSWORD");
 
   return jwt.sign(
     {
-      email: info.email,
-      points: info.points,
-      first_name: info.first_name,
-      last_name: info.last_name,
-      subscription: info.subscription,
+      userId: user.id,
     },
     process.env.SECRETKEY
   );

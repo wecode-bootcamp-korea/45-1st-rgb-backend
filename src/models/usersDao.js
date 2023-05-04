@@ -29,9 +29,9 @@ const signUp = async (
   }
 };
 
-const logIn = async (email) => {
+const getUserByEmail = async (email) => {
   try {
-    return await dataSource.query(
+    const [userInfo] = await dataSource.query(
       `SELECT
       id,
       email,
@@ -44,15 +44,16 @@ const logIn = async (email) => {
       WHERE users.email = ?`,
       [email]
     );
+    return userInfo;
   } catch (err) {
     console.log(err);
     const error = new Error(`INVALID_DATA_INPUT`);
-    error.statusCode = 500;
+    error.statusCode = 400;
     throw error;
   }
 };
 
 module.exports = {
   signUp,
-  logIn,
+  getUserByEmail,
 };
