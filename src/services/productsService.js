@@ -22,16 +22,6 @@ const getProduct = async (productId) => {
   }
 };
 
-const getProductsImage = async (productsImageId) => {
-  try {
-    const productsImage = await productsDao.getProductsImage(productsImageId);
-    return productsImage;
-  } catch (err) {
-    console.log(err);
-    throw new Error("Error has occurred in getting Products Images /productsDao");
-  }
-}
-
 module.exports = {
-  getAllProducts, getProduct, getProductsImage
+  getAllProducts, getProduct
 }

@@ -14,9 +14,11 @@ const getAllProducts = async (limit, offset) => {
         products.price,
         products.material,
         products.quantity,
-        products.max_quantity
+        products.max_quantity,
+        products_images.image_url
       FROM products 
       INNER JOIN categories ON categories.id = products.categories_id
+      LEFT JOIN products_images ON products_images.products_id = products.id
       LIMIT ? OFFSET ?;
       `,
       [parseInt(limit), parseInt(offset)]
@@ -41,8 +43,10 @@ const getProduct = async (productId) => {
       products.price,
       products.material,
       products.quantity,
-      products.max_quantity
+      products.max_quantity,
+      products_images.image_url
       FROM products
+      LEFT JOIN products_images ON products_images.products_id = products.id
       WHERE products.id = ?
       `,
       [productId]
@@ -54,22 +58,6 @@ const getProduct = async (productId) => {
   }
 };
 
-const getProductsImage = async (productsImageId) => {
-  try {
-    const getProductsImage = await dataSource.query(
-      `SELECT image_url
-      FROM products_images
-      WHERE products_id = ?`,
-      [productsImageId]
-    );
-    return getProductsImage;
-  } catch (err) {
-    console.log(err);
-    throw new Error("Error has occurred in getting Products Images /productsDao");
-  }
-}
-
 module.exports = {
-  getAllProducts, getProduct, getProductsImage
+  getAllProducts, getProduct
 }
-

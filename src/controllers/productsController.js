@@ -24,22 +24,6 @@ const getProduct = async (req, res) => {
   }
 };
 
-const getProductsImage = async (req, res) => {
-  try {
-    const productsImageId = req.params.productsImageId;
-    if (!productsImageId) {
-      return res.status(400).json({ message: 'PRODUCTS_IMAGE_NOT_FOUND' });
-    }
-
-    const products = await productsService.getProductsImage(productsImageId);
-
-    return res.status(200).json(products);
-  } catch (err) {
-    console.log(err);
-    return res.status(400).json({ message: "Error has occurred in getting Specific Products /productController" });
-  }
-};
-
 module.exports = {
-  getAllProducts, getProduct, getProductsImage
+  getAllProducts, getProduct
 }
