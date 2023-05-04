@@ -25,4 +25,3 @@ const getProduct = async (productsId) => {
 module.exports = {
   getAllProducts, getProduct
 }
-
