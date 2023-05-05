@@ -91,8 +91,6 @@ const saveOrder = async (userId, orderNumber, products) => {
   try {
     let totalPrice = 0;
 
-    //console.log(products)
-
     for (const product of products) {
       const [price] = await getProductsPrices([product.productId]);
       totalPrice += price.price * product.quantity;

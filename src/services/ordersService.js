@@ -84,7 +84,6 @@ const saveOrder = async (userId, orderNumber, products) => {
     await ordersDao.saveOrder(userId, orderNumber, products);
   } catch (err) {
     console.log(err);
-    console.log("cunt")
     throw new Error("Error_ saveOrder /ordersService");
   }
 };
