@@ -51,7 +51,7 @@ const getUserData = async (req, res) => {
 const placeOrder = async (req, res) => {
   try {
     const userId = req.body.userId;
-    const products = req.body.products; // Array of objects containing productId and quantity
+    const products = req.body.products;
 
     const productsWithPrices = await ordersService.getProductsPrices(products);
     const points = ordersService.calculatePoints(productsWithPrices);
