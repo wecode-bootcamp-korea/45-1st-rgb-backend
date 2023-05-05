@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const checkToken = async (req, res, next) => {
   try {
-    const token = req.headers.accessToken;
+    const token = req.headers.authorization;
 
     if (!token) new Error("INVALID_ACCESS_TOKEN");
 

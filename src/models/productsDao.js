@@ -1,3 +1,5 @@
+const dataSource = require("../models/dataSource")
+
 const getAllProducts = async (limit, offset) => {
   try {
     const rows = await dataSource.query(
@@ -57,3 +59,9 @@ const getProduct = async (productId) => {
     throw new Error("Error has occurred in getting Specific Products /productsDao");
   }
 };
+
+
+
+module.exports = {
+  getAllProducts, getProduct
+}
