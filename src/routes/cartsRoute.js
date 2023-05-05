@@ -6,7 +6,7 @@ const cartsController = require("../controllers/cartsController");
 const { checkToken } = require("../middlewares/auth");
 
 router.post("/:productsId", checkToken, cartsController.cartIn);
-router.get("", cartsController.cartInfo);
+router.get("", checkToken, cartsController.cartInfo);
 
 module.exports = {
   router,

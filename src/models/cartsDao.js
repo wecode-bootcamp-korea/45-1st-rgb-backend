@@ -17,6 +17,31 @@ const cartIn = async (userId, productsId) => {
   }
 };
 
+const cartInfo = async (userId) => {
+  try {
+    return await dataSource.query(
+      `SELECT 
+        cart.products_id as id, 
+        SUM(cart.quantity) as sum, 
+        products.title, 
+        products.products_size_left as width, 
+        products.products_size_right as height, 
+        products.quantity, products.price 
+          FROM cart JOIN products ON cart.products_id = products.id 
+          WHERE users_id = ?
+          GROUP BY products_id
+      `,
+      [userId]
+    );
+  } catch (err) {
+    console.log(err);
+    const error = new Error(`INVALID_DATA_INPUT`);
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   cartIn,
+  cartInfo,
 };

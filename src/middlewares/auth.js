@@ -2,8 +2,8 @@ const jwt = require("jsonwebtoken");
 
 const checkToken = async (req, res, next) => {
   try {
-    const token = req.headers.accessToken;
-
+    const token = req.headers.authorization;
+    console.log(token);
     if (!token) new Error("INVALID_ACCESS_TOKEN");
 
     const decode = jwt.verify(token, process.env.SECRETKEY);
