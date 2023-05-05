@@ -9,6 +9,15 @@ const addUserAddress = async (userId, address, postalCode) => {
   }
 };
 
+const getUserData = async (userId) => {
+  try {
+    const userData = await ordersDao.getUserData(userId);
+    return userData;
+  } catch (err) {
+    throw new Error("Error_ getUserData /ordersService");
+  }
+};
+
 module.exports = {
-  addUserAddress
+  addUserAddress, getUserData
 }

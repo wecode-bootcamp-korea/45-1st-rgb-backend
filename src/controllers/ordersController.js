@@ -24,6 +24,29 @@ const addUserAddress = async (req, res) => {
   }
 };
 
+const getUserData = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(400).json({ message: 'USER_NOT_FOUND' });
+    }
+
+    const user = await ordersService.getUserData(userId);
+
+    return res.status(200).json({
+      message: 'SUCCESSFULLY_GET_USERS_DATA',
+      user
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      message: "Error_ getUserData /ordersController",
+    });
+  }
+}
+
 module.exports = {
-  addUserAddress
+  addUserAddress, getUserData
 }

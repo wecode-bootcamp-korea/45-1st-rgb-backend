@@ -29,6 +29,26 @@ const addUserAddress = async (userId, address, postalCode) => {
   }
 };
 
+const getUserData = async (userId) => {
+  try {
+    const [user] = await dataSource.query(
+      `SELECT id, email, subscription, first_name, last_name, profile_image_url, address, postalcode, cellphone, sex, points, created_at, updated_at, is_active
+      FROM users
+      WHERE id = ?`,
+      [userId]
+    );
+
+    if (user) {
+      return user;
+    } else {
+      throw new Error("User not found");
+    }
+  } catch (err) {
+    console.log(err);
+    throw new Error("Error getting user data in ordersDAO " + err.message);
+  }
+};
+
 module.exports = {
-  addUserAddress
+  addUserAddress, getUserData
 }
