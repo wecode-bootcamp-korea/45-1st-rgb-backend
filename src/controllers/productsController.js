@@ -24,7 +24,6 @@ const getProduct = async (req, res) => {
   }
 };
 
-
 module.exports = {
   getAllProducts, getProduct
 }

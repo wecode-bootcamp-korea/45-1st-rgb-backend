@@ -1,5 +1,3 @@
-const dataSource = require("../models/dataSource")
-
 const getAllProducts = async (limit, offset) => {
   try {
     const rows = await dataSource.query(
@@ -14,9 +12,12 @@ const getAllProducts = async (limit, offset) => {
         products.price,
         products.material,
         products.quantity,
-        products.max_quantity
+        products.max_quantity,
+        JSON_ARRAYAGG(products_images.image_url) as image_urls
       FROM products 
       INNER JOIN categories ON categories.id = products.categories_id
+      LEFT JOIN products_images ON products_images.products_id = products.id
+      GROUP BY products.id
       LIMIT ? OFFSET ?;
       `,
       [parseInt(limit), parseInt(offset)]
@@ -41,9 +42,12 @@ const getProduct = async (productId) => {
       products.price,
       products.material,
       products.quantity,
-      products.max_quantity
+      products.max_quantity,
+      JSON_ARRAYAGG(products_images.image_url) as image_urls
       FROM products
+      LEFT JOIN products_images ON products_images.products_id = products.id
       WHERE products.id = ?
+      GROUP BY products.id
       `,
       [productId]
     );
@@ -53,9 +57,3 @@ const getProduct = async (productId) => {
     throw new Error("Error has occurred in getting Specific Products /productsDao");
   }
 };
-
-
-module.exports = {
-  getAllProducts, getProduct
-}
-
