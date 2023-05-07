@@ -40,7 +40,31 @@ const logIn = async (req, res) => {
   }
 };
 
+const addUserAddress = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { address, postalCode } = req.body;
+
+    if (!userId || !address || !postalCode) {
+      return res.status(400).json({ message: 'USER_INPUT_DATA_IS_NOT_ENOUGH' });
+    }
+
+    await userService.addUserAddress(userId, address, postalCode);
+
+    return res.status(200).json({
+      message: 'SUCCESSFULLY UPDATED USERS ADDRESS'
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      message: "Error_ addUserAddress /usersController",
+    });
+  }
+};
+
 module.exports = {
   signUp,
   logIn,
+  addUserAddress
 };

@@ -52,7 +52,16 @@ const logIn = async (email, password) => {
   );
 };
 
+const addUserAddress = async (userId, address, postalCode) => {
+  try {
+    await usersDao.addUserAddress(userId, address, postalCode);
+  } catch (err) {
+    throw new Error("Error_ addUserAddress /usersService")
+  }
+};
+
 module.exports = {
   signUp,
   logIn,
+  addUserAddress
 };
