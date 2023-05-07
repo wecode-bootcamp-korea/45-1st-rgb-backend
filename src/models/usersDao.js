@@ -53,37 +53,41 @@ const getUserByEmail = async (email) => {
   }
 };
 
-const addUserAddress = async (userId, address, postalCode) => {
+const getUserById = async (userId) => {
   try {
     const [user] = await dataSource.query(
-      `SELECT id, address, postalcode AS postalCode
+      `SELECT id
       FROM users
       WHERE id = ?`,
       [userId]
     );
+    return user;
+  } catch (err) {
+    console.log(err);
+    throw new Error("Error getting user by ID usersDAO " + err.message);
+  }
+};
 
-    if (user) {
-      const user_id = user.id;
-
-      await dataSource.query(
-        `UPDATE users
+const addUserAddress = async (userId, address, postalCode) => {
+  try {
+    await dataSource.query(
+      `UPDATE users
         SET
           address = ?,
           postalcode = ?
         WHERE id = ?`,
-        [address, postalCode, user_id]
-      );
-    } else {
-      throw new Error("User not found");
-    }
+      [address, postalCode, userId]
+    );
   } catch (err) {
     console.log(err);
     throw new Error("Error updating address for User usersDAO " + err.message);
   }
 };
 
+
 module.exports = {
   signUp,
   getUserByEmail,
+  getUserById,
   addUserAddress
 };

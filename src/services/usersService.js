@@ -52,16 +52,27 @@ const logIn = async (email, password) => {
   );
 };
 
+const getUserById = async (userId) => {
+  const user = await usersDao.getUserById(userId);
+  if (!user) throw new Error("User not found");
+  return user;
+};
+
+
+
 const addUserAddress = async (userId, address, postalCode) => {
   try {
-    await usersDao.addUserAddress(userId, address, postalCode);
+    await getUserById(userId);
+    const addUserAddressResult = await usersDao.addUserAddress(userId, address, postalCode);
+    return addUserAddressResult;
   } catch (err) {
-    throw new Error("Error_ addUserAddress /usersService")
+    throw new Error("Error_ addUserAddress /usersService " + err.message);
   }
 };
 
 module.exports = {
   signUp,
   logIn,
+  getUserById,
   addUserAddress
 };

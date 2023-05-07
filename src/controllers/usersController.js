@@ -42,7 +42,7 @@ const logIn = async (req, res) => {
 
 const addUserAddress = async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.userId;
     const { address, postalCode } = req.body;
 
     if (!userId || !address || !postalCode) {
@@ -51,9 +51,7 @@ const addUserAddress = async (req, res) => {
 
     await userService.addUserAddress(userId, address, postalCode);
 
-    return res.status(200).json({
-      message: 'SUCCESSFULLY UPDATED USERS ADDRESS'
-    });
+    return res.status(200).json({ message: 'Address added successfully' });
 
   } catch (err) {
     console.log(err);
