@@ -1,13 +1,6 @@
 const dataSource = require("./dataSource");
 
-const signUp = async (
-  email,
-  password,
-  firstName,
-  lastName,
-  subscription,
-  points
-) => {
+const signUp = async (email, password, firstName, lastName, points) => {
   try {
     await dataSource.query(
       `INSERT INTO users(
@@ -15,11 +8,10 @@ const signUp = async (
         password,
         first_name,
         last_name,
-        subscription,
         points
-      )VALUES (?,?,?,?,?,?);
+      )VALUES (?,?,?,?,?);
       `,
-      [email, password, firstName, lastName, subscription, points]
+      [email, password, firstName, lastName, points]
     );
   } catch (err) {
     console.log(err);
