@@ -14,13 +14,14 @@ const createCart = async (userId, productsId, quantity) => {
 
     return await dataSource.query(
       `SELECT 
+        id,
         users_id,
         products_id,
         quantity
         FROM cart
-        WHERE users_id = ?
+        WHERE id = ?
       `,
-      [userId]
+      [result.insertId]
     );
   } catch (err) {
     console.log(err);
