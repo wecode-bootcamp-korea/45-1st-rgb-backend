@@ -63,11 +63,6 @@ const getProduct = async (productId) => {
 };
 
 module.exports = {
-<<<<<<< HEAD
   getAllProducts,
   getProduct,
 };
-=======
-  getAllProducts, getProduct
-}
->>>>>>> main
