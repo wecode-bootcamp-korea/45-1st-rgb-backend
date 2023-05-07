@@ -6,6 +6,15 @@ const usersDao = require("../models/usersDao");
 const { pwValidationCheck } = require("../utils/validation-check");
 const { emailValidationCheck } = require("../utils/validation-check");
 
+const getUserData = async (userId) => {
+  try {
+    const userData = await usersDao.getUserData(userId);
+    return userData;
+  } catch (err) {
+    throw new Error("Error_ getUserData /ordersService");
+  }
+};
+
 const signUp = async (
   email,
   password,
@@ -52,7 +61,26 @@ const logIn = async (email, password) => {
   );
 };
 
+const getUserById = async (userId) => {
+  const user = await usersDao.getUserById(userId);
+  if (!user) throw new Error("User not found");
+  return user;
+};
+
+const addUserAddress = async (userId, address, postalCode) => {
+  try {
+    await getUserById(userId);
+    const addUserAddressResult = await usersDao.addUserAddress(userId, address, postalCode);
+    return addUserAddressResult;
+  } catch (err) {
+    throw new Error("Error_ addUserAddress /usersService " + err.message);
+  }
+};
+
 module.exports = {
+  getUserData,
   signUp,
   logIn,
+  getUserById,
+  addUserAddress
 };

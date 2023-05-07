@@ -1,5 +1,28 @@
 const userService = require("../services/usersService");
 
+const getUserData = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(400).json({ message: 'USER_NOT_FOUND' });
+    }
+
+    const user = await userService.getUserData(userId);
+
+    return res.status(200).json({
+      message: 'SUCCESSFULLY_GET_USERS_DATA',
+      user
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      message: "Error_ getUserData /ordersController",
+    });
+  }
+}
+
 const signUp = async (req, res) => {
   try {
     const { email, password, firstName, lastName, subscription } = req.body;
@@ -40,7 +63,30 @@ const logIn = async (req, res) => {
   }
 };
 
+const addUserAddress = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { address, postalCode } = req.body;
+
+    if (!userId || !address || !postalCode) {
+      return res.status(400).json({ message: 'USER_INPUT_DATA_IS_NOT_ENOUGH' });
+    }
+
+    await userService.addUserAddress(userId, address, postalCode);
+
+    return res.status(200).json({ message: 'Address added successfully' });
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      message: "Error_ addUserAddress /usersController",
+    });
+  }
+};
+
 module.exports = {
+  getUserData,
   signUp,
   logIn,
+  addUserAddress
 };
