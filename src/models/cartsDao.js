@@ -1,8 +1,8 @@
 const dataSource = require("./dataSource");
 
-const createCatr = async (userId, productsId, quantity) => {
+const createCart = async (userId, productsId, quantity) => {
   try {
-    await dataSource.query(
+    const result = await dataSource.query(
       `INSERT INTO cart(
         users_id,
         products_id,
@@ -31,5 +31,5 @@ const createCatr = async (userId, productsId, quantity) => {
 };
 
 module.exports = {
-  createCatr,
+  createCart,
 };

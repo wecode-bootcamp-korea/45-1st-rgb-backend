@@ -1,6 +1,6 @@
 const cartService = require("../models/cartsDao");
 
-const createCatr = async (req, res) => {
+const createCart = async (req, res) => {
   try {
     const userId = req.userId;
 
@@ -10,7 +10,7 @@ const createCatr = async (req, res) => {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
-    const createCart = await cartService.createCatr(
+    const createCart = await cartService.createCart(
       userId,
       productsId,
       quantity
@@ -23,5 +23,5 @@ const createCatr = async (req, res) => {
 };
 
 module.exports = {
-  createCatr,
+  createCart,
 };

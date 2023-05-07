@@ -4,7 +4,7 @@ const signUp = async (req, res) => {
   try {
     const { email, password, firstName, lastName } = req.body;
     const points = process.env.POINTS;
-    console.log(email, password, firstName, lastName);
+
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }

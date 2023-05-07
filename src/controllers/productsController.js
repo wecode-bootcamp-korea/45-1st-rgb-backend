@@ -20,11 +20,16 @@ const getProduct = async (req, res) => {
 
     return res.status(200).json(product);
   } catch (err) {
-    return res.status(400).json({ message: "Error has occurred in getting Specific Products /productController" });
+    return res
+      .status(400)
+      .json({
+        message:
+          "Error has occurred in getting Specific Products /productController",
+      });
   }
 };
 
-
 module.exports = {
-  getAllProducts, getProduct
-}
+  getAllProducts,
+  getProduct,
+};
