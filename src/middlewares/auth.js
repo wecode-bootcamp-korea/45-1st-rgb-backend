@@ -1,33 +1,20 @@
 const jwt = require("jsonwebtoken");
-const userService = require("../services/userService")
 
-const validateToken = async (req, res, next) => {
+const checkToken = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
 
-    if (!token) {
-      return res.status(403).send("A token is required for authentication");
-    }
+    if (!token) new Error("INVALID_ACCESS_TOKEN");
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const decode = jwt.verify(token, process.env.SECRETKEY);
 
-    const user = await userService.getUserId(decoded.id)
+    req.userId = decode.userId;
 
-    if (!user) {
-      const error = new Error('USER_DOES_NOT_EXIST')
-      error.statusCode = 404
-
-      return res.status(error.statusCode).json({ message: error.message })
-    }
-    req.user = user;
-
-    return next();
-  } catch (err) {
-    console.log(err);
-    return res.status(401).send("Invalid Token");
+    next();
+  } catch {
+    res.status(401).json({ message: "INVALID_ACCESS_TOKEN" });
   }
 };
-
 module.exports = {
-  validateToken
+  checkToken,
 };
