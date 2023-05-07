@@ -6,14 +6,7 @@ const usersDao = require("../models/usersDao");
 const { pwValidationCheck } = require("../utils/validation-check");
 const { emailValidationCheck } = require("../utils/validation-check");
 
-const signUp = async (
-  email,
-  password,
-  firstName,
-  lastName,
-  subscription,
-  points
-) => {
+const signUp = async (email, password, firstName, lastName, points) => {
   await pwValidationCheck(password);
   await emailValidationCheck(email);
 
@@ -27,7 +20,6 @@ const signUp = async (
     hashPassword,
     firstName,
     lastName,
-    subscription,
     points
   );
 };
@@ -52,7 +44,27 @@ const logIn = async (email, password) => {
   );
 };
 
+const getUserById = async (userId) => {
+  const user = await usersDao.getUserById(userId);
+  if (!user) throw new Error("User not found");
+  return user;
+};
+
+
+
+const addUserAddress = async (userId, address, postalCode) => {
+  try {
+    await getUserById(userId);
+    const addUserAddressResult = await usersDao.addUserAddress(userId, address, postalCode);
+    return addUserAddressResult;
+  } catch (err) {
+    throw new Error("Error_ addUserAddress /usersService " + err.message);
+  }
+};
+
 module.exports = {
   signUp,
   logIn,
+  getUserById,
+  addUserAddress
 };

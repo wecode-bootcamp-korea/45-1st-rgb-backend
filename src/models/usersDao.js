@@ -1,13 +1,6 @@
 const dataSource = require("./dataSource");
 
-const signUp = async (
-  email,
-  password,
-  firstName,
-  lastName,
-  subscription,
-  points
-) => {
+const signUp = async (email, password, firstName, lastName, points) => {
   try {
     await dataSource.query(
       `INSERT INTO users(
@@ -15,11 +8,10 @@ const signUp = async (
         password,
         first_name,
         last_name,
-        subscription,
         points
-      )VALUES (?,?,?,?,?,?);
+      )VALUES (?,?,?,?,?);
       `,
-      [email, password, firstName, lastName, subscription, points]
+      [email, password, firstName, lastName, points]
     );
   } catch (err) {
     console.log(err);
@@ -53,7 +45,40 @@ const getUserByEmail = async (email) => {
   }
 };
 
+const getUserById = async (userId) => {
+  try {
+    const [user] = await dataSource.query(
+      `SELECT id
+      FROM users
+      WHERE id = ?`,
+      [userId]
+    );
+    return user;
+  } catch (err) {
+    console.log(err);
+    throw new Error("Error getting user by ID usersDAO " + err.message);
+  }
+};
+
+const addUserAddress = async (userId, address, postalCode) => {
+  try {
+    await dataSource.query(
+      `UPDATE users
+        SET
+          address = ?,
+          postalcode = ?
+        WHERE id = ?`,
+      [address, postalCode, userId]
+    );
+  } catch (err) {
+    console.log(err);
+    throw new Error("Error updating address for User usersDAO " + err.message);
+  }
+};
+
 module.exports = {
   signUp,
   getUserByEmail,
+  getUserById,
+  addUserAddress,
 };
