@@ -30,6 +30,14 @@ const createCart = async (userId, productsId, quantity) => {
   }
 };
 
+const cartUpdate = async (userId , productsId) =>{
+  try{
+    await dataSource.query(
+      UPDATE 
+    )
+  }
+}
+
 module.exports = {
   createCart,
 };
