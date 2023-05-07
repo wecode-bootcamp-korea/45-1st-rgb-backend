@@ -4,9 +4,7 @@ const { checkToken } = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.post("", checkToken, ordersController.addUserAddress);
-router.get("/user-data", checkToken, ordersController.getUserData);
-router.post("/place-order", ordersController.placeOrder);
+router.post("/", checkToken, ordersController.placeOrder);
 
 module.exports = {
   router,
