@@ -10,11 +10,11 @@ const createCart = async (userId, productsId, quantity) => {
   return createCart;
 };
 
-const modifyQuantity = async (userId, productsId, calculation) => {
+const modifyQuantity = async (userId, productId, quantity) => {
   const modifyQuantity = await cartsDao.modifyQuantity(
     userId,
-    productsId,
-    calculation
+    productId,
+    quantity
   );
   return modifyQuantity;
 };

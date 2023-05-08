@@ -41,15 +41,17 @@ const cartInfo = async (req, res) => {
 const modifyQuantity = async (req, res) => {
   try {
     const userId = req.userId;
-    const { productsId, calculation } = req.body;
-    if (!userId || !productsId || !calculation) {
+    const { productId } = req.params;
+    const { quantity } = req.body;
+
+    if (!userId || !productId || !quantity) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
     const modifyQuantity = await cartService.modifyQuantity(
       userId,
-      productsId,
-      calculation
+      productId,
+      quantity
     );
 
     return res.status(201).json({ modifyQuantity });

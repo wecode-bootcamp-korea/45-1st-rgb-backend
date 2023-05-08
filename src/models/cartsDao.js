@@ -30,23 +30,24 @@ const cartInfo = async (userId) => {
 const createCart = async (userId, productsId, quantity) => {
   try {
     const result = await dataSource.query(
-      `INSERT INTO cart (users_id, products_id , quantity) 
+      `INSERT INTO cart 
+      (users_id, products_id , quantity) 
       VALUE (? , ? , ?) 
       ON DUPLICATE KEY 
       UPDATE quantity = quantity + ${quantity}
      `,
       [userId, productsId, quantity]
     );
-
+    console.log(userId);
     return await dataSource.query(
       `SELECT 
         users_id,
         products_id,
         quantity
         FROM cart
-        WHERE id = ?
+        WHERE users_id = ?
       `,
-      [result.insertId]
+      [userId]
     );
   } catch (err) {
     console.log(err);
@@ -56,24 +57,26 @@ const createCart = async (userId, productsId, quantity) => {
   }
 };
 
-const modifyQuantity = async (userId, productsId, calculation) => {
+const modifyQuantity = async (userId, productId, quantity) => {
   try {
     await dataSource.query(
       `UPDATE cart
-        SET quantity =(cart.quantity)${calculation}
-        WHERE users_id = ? AND products_id = ?
+        SET quantity = ?
+        WHERE users_id= ? AND products_id = ?
       `,
-      [userId, productsId]
+      [quantity, userId, productId]
     );
 
     return await dataSource.query(
       `SELECT 
-        cart.products_id as id, 
-        SUM(cart.quantity) as cartSum, 
+        cart.id,
+        cart.products_id, 
+        cart.quantity, 
         products.title, 
         products.products_size_left as width, 
         products.products_size_right as height, 
-        products.quantity as inventory, products.price as individualPrice 
+        products.quantity as inventory, 
+        products.price as individualPrice 
       FROM cart JOIN products ON cart.products_id = products.id 
       WHERE users_id = ?
         GROUP BY products_id
