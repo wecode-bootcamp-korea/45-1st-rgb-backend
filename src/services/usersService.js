@@ -6,14 +6,7 @@ const usersDao = require("../models/usersDao");
 const { pwValidationCheck } = require("../utils/validation-check");
 const { emailValidationCheck } = require("../utils/validation-check");
 
-const signUp = async (
-  email,
-  password,
-  firstName,
-  lastName,
-  subscription,
-  points
-) => {
+const signUp = async (email, password, firstName, lastName, points) => {
   await pwValidationCheck(password);
   await emailValidationCheck(email);
 
@@ -27,7 +20,6 @@ const signUp = async (
     hashPassword,
     firstName,
     lastName,
-    subscription,
     points
   );
 };
