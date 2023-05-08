@@ -28,11 +28,18 @@ const signUp = async (req, res) => {
     const { email, password, firstName, lastName, subscription } = req.body;
     const points = process.env.POINTS;
 
-    if (!email || !password || !firstName || !lastName) {
+    if (!email || !password || !firstName || !lastName || !subscription) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
-    await userService.signUp(email, password, firstName, lastName, points, subscription);
+    await userService.signUp(
+      email,
+      password,
+      firstName,
+      lastName,
+      subscription,
+      points
+    );
     return res.status(201).json({ message: "SUCCESS_SIGNUP" });
   } catch (err) {
     console.log(err);
