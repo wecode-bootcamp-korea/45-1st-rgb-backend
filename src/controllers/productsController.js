@@ -10,26 +10,6 @@ const getAllProducts = async (req, res, next) => {
   }
 };
 
-const getAllArtsProducts = async (req, res, next) => {
-  try {
-    const { limit = 10, offset = 0 } = req.query;
-    const products = await productsService.getArtsProducts(limit, offset);
-    res.status(200).json(products);
-  } catch (err) {
-    next(err);
-  }
-};
-
-const getAllGoodsProducts = async (req, res, next) => {
-  try {
-    const { limit = 10, offset = 0 } = req.query;
-    const products = await productsService.getGoodsProducts(limit, offset);
-    res.status(200).json(products);
-  } catch (err) {
-    next(err);
-  }
-};
-
 const getProduct = async (req, res, next) => {
   try {
     const productId = req.params.productId;
@@ -42,7 +22,5 @@ const getProduct = async (req, res, next) => {
 
 module.exports = {
   getAllProducts,
-  getAllArtsProducts,
-  getAllGoodsProducts,
   getProduct,
 };
