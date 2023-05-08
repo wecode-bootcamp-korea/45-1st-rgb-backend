@@ -1,6 +1,18 @@
 const dataSource = require("../models/dataSource");
 
-const getAllProducts = async (limit, offset) => {
+const getAllProducts = async (limit, offset, category) => {
+  let whereClause = "";
+  let categoryValues = [];
+
+  if (category === "arts") {
+    whereClause = "WHERE products.categories_id = 1";
+  } else if (category === "goods") {
+    whereClause = "WHERE products.categories_id != 1";
+  } else if (category) {
+    whereClause = "WHERE products.categories_id = ?";
+    categoryValues = [category];
+  }
+
   try {
     const rows = await dataSource.query(
       `SELECT 
@@ -19,16 +31,20 @@ const getAllProducts = async (limit, offset) => {
       FROM products 
       INNER JOIN categories ON categories.id = products.categories_id
       LEFT JOIN products_images ON products_images.products_id = products.id
+      ${whereClause}
       GROUP BY products.id
       LIMIT ? OFFSET ?;
       `,
-      [parseInt(limit), parseInt(offset)]
+      [...categoryValues, parseInt(limit), parseInt(offset)]
     );
     return rows;
   } catch (err) {
-    throw new Error("Error has occurred in getting All Products /productDao");
+    throw new Error("Error has occurred in getting products in productsDao/getAllProducts");
   }
 };
+
+
+
 
 const getProduct = async (productId) => {
   try {
@@ -56,15 +72,11 @@ const getProduct = async (productId) => {
 
     return product;
   } catch (error) {
-    throw new Error(
-      "Error has occurred in getting Specific Products /productsDao"
-    );
+    throw new Error("Error has occurred in getting specific product in productsDao/getProduct");
   }
 };
 
 module.exports = {
   getAllProducts,
-  getProduct
+  getProduct,
 };
-
-
