@@ -1,4 +1,4 @@
-const cartService = require("../models/cartsDao");
+const cartService = require("../services/cartsService");
 
 const createCart = async (req, res) => {
   try {
@@ -22,27 +22,25 @@ const createCart = async (req, res) => {
   }
 };
 
-const cartUpdate = async (req,res) =>{
-  try{
-    const userId = req.userId ;
-    const { productsId } = req.body
+const subtract = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { id } = req.body;
 
-    if(!userId || !productsId) {
-      return res.stats(400).json({ message: "KEY_ERROR" });
+    if (!userId || !id) {
+      return res.status(400).json({ message: "KEY_ERROR" });
     }
 
-    const cartUpdate = await cartService.cartUpdate(
-      userId,
-      productsId
-    );
-    return res.status(201.json({cartUpdate}))
-  }catch (err) {
+    const subtract = await cartService.subtract(id, userId);
+
+    return res.status(201).json({ subtract });
+  } catch (err) {
     console.log(err);
     return res.status(err.statusCode || 500).json({ message: err.message });
   }
-}
+};
 
 module.exports = {
   createCart,
-  cartUpdate
+  subtract,
 };

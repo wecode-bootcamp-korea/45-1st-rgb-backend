@@ -6,9 +6,8 @@ const cartsController = require("../controllers/cartsController");
 const { checkToken } = require("../middlewares/auth");
 
 router.post("", checkToken, cartsController.createCart);
-router.patch("", checkToken, cartsController.cartUpdate);
+router.patch("", checkToken, cartsController.subtract);
 
 module.exports = {
   router,
-  cartUpdate,
 };
