@@ -1,15 +1,8 @@
 const dataSource = require("../models/dataSource");
 
 const getAllProducts = async (limit, offset, category) => {
-  let whereClause = "";
-  let categoryValues = [];
-
-  if (category) {
-    whereClause = "WHERE categories.id = ?";
-    categoryValues = [category];
-  }
-
   try {
+    const categoryNum = isNaN(category) ? null : parseInt(category);
     const rows = await dataSource.query(
       `SELECT 
         products.id,
@@ -27,17 +20,18 @@ const getAllProducts = async (limit, offset, category) => {
       FROM products 
       INNER JOIN categories ON categories.id = products.categories_id
       LEFT JOIN products_images ON products_images.products_id = products.id
-      ${whereClause}
+      WHERE categories.id = ?
       GROUP BY products.id
       LIMIT ? OFFSET ?;
       `,
-      [...categoryValues, parseInt(limit), parseInt(offset)]
+      [categoryNum, parseInt(limit), parseInt(offset)]
     );
     return rows;
   } catch (err) {
     throw new Error("Error has occurred in getting products in productsDao/getAllProducts");
   }
 };
+
 
 
 const getProduct = async (productId) => {
