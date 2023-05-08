@@ -1,29 +1,22 @@
 const productsService = require("../services/productsService");
 
-const getAllProducts = async (req, res) => {
+const getAllProducts = async (req, res, next) => {
   try {
-    const { limit = 10, offset = 0 } = req.query;
-    const products = await productsService.getAllProducts(limit, offset);
+    const { limit = 10, offset = 0, category } = req.query;
+    const products = await productsService.getAllProducts(limit, offset, category);
     res.status(200).json(products);
   } catch (err) {
-    console.log(err);
-    res.status(400).json({
-      message: "Error has occurred in getting All Products /productController",
-    });
+    next(err);
   }
 };
 
-const getProduct = async (req, res) => {
+const getProduct = async (req, res, next) => {
   try {
     const productId = req.params.productId;
     const product = await productsService.getProduct(productId);
-
-    return res.status(200).json(product);
+    res.status(200).json(product);
   } catch (err) {
-    return res.status(400).json({
-      message:
-        "Error has occurred in getting Specific Products /productController",
-    });
+    next(err);
   }
 };
 
