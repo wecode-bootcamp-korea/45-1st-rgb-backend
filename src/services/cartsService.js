@@ -10,7 +10,13 @@ const createCart = async (userId, productsId, quantity) => {
   return createCart;
 };
 
+const deleteProduct = async (userId, productsId) => {
+  const deleteProduct = await cartsDao.deleteProduct(userId, productsId);
+  return deleteProduct;
+};
+
 module.exports = {
   createCart,
   cartInfo,
+  deleteProduct,
 };

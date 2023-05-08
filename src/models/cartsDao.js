@@ -55,7 +55,44 @@ const createCart = async (userId, productsId, quantity) => {
   }
 };
 
+const deleteProduct = async (userId, productsId) => {
+  try {
+    console.log(userId, productsId);
+    await dataSource.query(
+      `DELETE
+        FROM cart
+        WHERE users_id = ? AND products_id = ?`,
+      [userId, productsId]
+    );
+
+    return await dataSource.query(
+      `SELECT  
+      cart.id,
+      cart.products_id ,
+      SUM(cart.quantity) as cartSum, 
+      products.title, 
+      products.products_size_left as width, 
+      products.products_size_right as height, 
+      products_images.image_url as image,
+      products.quantity as inventory, 
+      products.price as individualPrice 
+    FROM products JOIN cart ON cart.products_id = products.id 
+    JOIN products_images ON products.id = products_images.products_id
+    WHERE users_id = ?
+    GROUP BY products_id,products_images.image_url
+    `,
+      [userId]
+    );
+  } catch (err) {
+    console.log(err);
+    const error = new Error(`INVALID_DATA_INPUT`);
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createCart,
   cartInfo,
+  deleteProduct,
 };
