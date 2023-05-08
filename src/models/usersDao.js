@@ -1,6 +1,33 @@
-const dataSource = require("./dataSource");
+const dataSource = require("../models/dataSource");
 
-const signUp = async (email, password, firstName, lastName, points) => {
+const getUserData = async (userId) => {
+  try {
+    const [user] = await dataSource.query(
+      `SELECT id, email, subscription, first_name, last_name, profile_image_url, address, postalcode, cellphone, sex, points, created_at, updated_at, is_active
+      FROM users
+      WHERE id = ?`,
+      [userId]
+    );
+
+    if (user) {
+      return user;
+    } else {
+      throw new Error("User not found");
+    }
+  } catch (err) {
+    console.log(err);
+    throw new Error("Error getting user data in ordersDAO " + err.message);
+  }
+};
+
+const signUp = async (
+  email,
+  password,
+  firstName,
+  lastName,
+  subscription,
+  points
+) => {
   try {
     await dataSource.query(
       `INSERT INTO users(
@@ -8,10 +35,11 @@ const signUp = async (email, password, firstName, lastName, points) => {
         password,
         first_name,
         last_name,
+        subscription,
         points
-      )VALUES (?,?,?,?,?);
+      )VALUES (?,?,?,?,?,?);
       `,
-      [email, password, firstName, lastName, points]
+      [email, password, firstName, lastName, subscription, points]
     );
   } catch (err) {
     console.log(err);
@@ -78,6 +106,7 @@ const addUserAddress = async (userId, address, postalCode, cellphone) => {
 };
 
 module.exports = {
+  getUserData,
   signUp,
   getUserByEmail,
   getUserById,
