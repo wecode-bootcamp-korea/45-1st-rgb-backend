@@ -68,15 +68,16 @@ const getUserById = async (userId) => {
   }
 };
 
-const addUserAddress = async (userId, address, postalCode) => {
+const addUserAddress = async (userId, address, postalCode, cellphone) => {
   try {
     await dataSource.query(
       `UPDATE users
         SET
+          cellphone = ?,
           address = ?,
           postalcode = ?
         WHERE id = ?`,
-      [address, postalCode, userId]
+      [cellphone, address, postalCode, userId]
     );
   } catch (err) {
     console.log(err);

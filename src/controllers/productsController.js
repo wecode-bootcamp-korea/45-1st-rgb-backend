@@ -2,7 +2,7 @@ const productsService = require("../services/productsService");
 
 const getAllProducts = async (req, res, next) => {
   try {
-    const { limit = 6, offset = 0, category } = req.query;
+    const { limit = 10, offset = 0, category } = req.query;
     const products = await productsService.getAllProducts(limit, offset, category);
     res.status(200).json(products);
   } catch (err) {
@@ -12,7 +12,7 @@ const getAllProducts = async (req, res, next) => {
 
 const getAllArtsProducts = async (req, res, next) => {
   try {
-    const { limit = 6, offset = 0 } = req.query;
+    const { limit = 10, offset = 0 } = req.query;
     const products = await productsService.getArtsProducts(limit, offset);
     res.status(200).json(products);
   } catch (err) {
@@ -22,7 +22,7 @@ const getAllArtsProducts = async (req, res, next) => {
 
 const getAllGoodsProducts = async (req, res, next) => {
   try {
-    const { limit = 6, offset = 0 } = req.query;
+    const { limit = 10, offset = 0 } = req.query;
     const products = await productsService.getGoodsProducts(limit, offset);
     res.status(200).json(products);
   } catch (err) {
