@@ -1,4 +1,4 @@
-const dataSource = require("../models/dataSource")
+const dataSource = require("../models/dataSource");
 
 const getAllProducts = async (limit, offset) => {
   try {
@@ -56,7 +56,9 @@ const getProduct = async (productId) => {
 
     return product;
   } catch (error) {
-    throw new Error("Error has occurred in getting Specific Products /productsDao");
+    throw new Error(
+      "Error has occurred in getting Specific Products /productsDao"
+    );
   }
 };
 
