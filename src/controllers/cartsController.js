@@ -22,18 +22,21 @@ const createCart = async (req, res) => {
   }
 };
 
-const subtract = async (req, res) => {
+const modifyQuantity = async (req, res) => {
   try {
     const userId = req.userId;
-    const { id } = req.body;
-
-    if (!userId || !id) {
+    const { productsId, calculation } = req.body;
+    if (!userId || !productsId || !calculation) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
-    const subtract = await cartService.subtract(id, userId);
+    const modifyQuantity = await cartService.modifyQuantity(
+      userId,
+      productsId,
+      calculation
+    );
 
-    return res.status(201).json({ subtract });
+    return res.status(201).json({ modifyQuantity });
   } catch (err) {
     console.log(err);
     return res.status(err.statusCode || 500).json({ message: err.message });
@@ -42,5 +45,5 @@ const subtract = async (req, res) => {
 
 module.exports = {
   createCart,
-  subtract,
+  modifyQuantity,
 };

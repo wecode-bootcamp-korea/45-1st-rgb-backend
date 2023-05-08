@@ -3,12 +3,11 @@ const dataSource = require("./dataSource");
 const createCart = async (userId, productsId, quantity) => {
   try {
     const result = await dataSource.query(
-      `INSERT INTO cart(
-        users_id,
-        products_id,
-        quantity
-      )VALUES (?,?,?)
-      `,
+      `INSERT INTO cart (users_id, products_id , quantity) 
+      VALUE (? , ? , ?) 
+      ON DUPLICATE KEY 
+      UPDATE quantity = quantity + ${quantity}
+     `,
       [userId, productsId, quantity]
     );
 
@@ -18,9 +17,9 @@ const createCart = async (userId, productsId, quantity) => {
         products_id,
         quantity
         FROM cart
-        WHERE users_id = ?
+        WHERE id = ?
       `,
-      [userId]
+      [result.insertId]
     );
   } catch (err) {
     console.log(err);
@@ -30,14 +29,14 @@ const createCart = async (userId, productsId, quantity) => {
   }
 };
 
-const subtract = async (id, usersId) => {
+const modifyQuantity = async (userId, productsId, calculation) => {
   try {
     await dataSource.query(
       `UPDATE cart
-      SET quantity = ( cart.quantity -1 ) 
-      WHERE id = ?
+        SET quantity =(cart.quantity)${calculation}
+        WHERE users_id = ? AND products_id = ?
       `,
-      [id]
+      [userId, productsId]
     );
 
     return await dataSource.query(
@@ -52,7 +51,7 @@ const subtract = async (id, usersId) => {
       WHERE users_id = ?
         GROUP BY products_id
         `,
-      [usersId]
+      [userId]
     );
   } catch (err) {
     console.log(err);
@@ -64,5 +63,5 @@ const subtract = async (id, usersId) => {
 
 module.exports = {
   createCart,
-  subtract,
+  modifyQuantity,
 };
