@@ -4,12 +4,8 @@ const getAllProducts = async (limit, offset, category) => {
   let whereClause = "";
   let categoryValues = [];
 
-  if (category === "arts") {
-    whereClause = "WHERE products.categories_id = 1";
-  } else if (category === "goods") {
-    whereClause = "WHERE products.categories_id != 1";
-  } else if (category) {
-    whereClause = "WHERE products.categories_id = ?";
+  if (category) {
+    whereClause = "WHERE categories.name = ?";
     categoryValues = [category];
   }
 
@@ -42,6 +38,7 @@ const getAllProducts = async (limit, offset, category) => {
     throw new Error("Error has occurred in getting products in productsDao/getAllProducts");
   }
 };
+
 
 
 
