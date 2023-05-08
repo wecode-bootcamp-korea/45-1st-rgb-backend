@@ -20,26 +20,19 @@ const getUserData = async (userId) => {
   }
 };
 
-const signUp = async (
-  email,
-  password,
-  firstName,
-  lastName,
-  subscription,
-  points
-) => {
+const signUp = async (email, password, firstName, lastName, subscription, points) => {
   try {
     await dataSource.query(
       `INSERT INTO users(
         email,
+        subscription,
         password,
         first_name,
         last_name,
-        subscription,
         points
       )VALUES (?,?,?,?,?,?);
       `,
-      [email, password, firstName, lastName, subscription, points]
+      [email, subscription, password, firstName, lastName, points]
     );
   } catch (err) {
     console.log(err);
@@ -104,11 +97,10 @@ const addUserAddress = async (userId, address, postalCode) => {
   }
 };
 
-
 module.exports = {
   getUserData,
   signUp,
   getUserByEmail,
   getUserById,
-  addUserAddress
+  addUserAddress,
 };

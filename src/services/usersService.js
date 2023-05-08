@@ -17,14 +17,14 @@ const getUserData = async (userId) => {
 
 const signUp = async (
   email,
+  subscription,
   password,
   firstName,
   lastName,
-  subscription,
   points
 ) => {
-  await pwValidationCheck(password);
   await emailValidationCheck(email);
+  await pwValidationCheck(password);
 
   const saltRounds = Number(process.env.SALT);
   const salt = await bcrypt.genSalt(saltRounds);
@@ -33,10 +33,10 @@ const signUp = async (
 
   return await usersDao.signUp(
     email,
+    subscription,
     hashPassword,
     firstName,
     lastName,
-    subscription,
     points
   );
 };
