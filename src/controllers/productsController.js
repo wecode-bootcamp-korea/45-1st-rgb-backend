@@ -2,7 +2,7 @@ const productsService = require("../services/productsService");
 
 const getAllProducts = async (req, res) => {
   try {
-    const { limit = 6, offset = 0 } = req.query;
+    const { limit = 10, offset = 0 } = req.query;
     const products = await productsService.getAllProducts(limit, offset);
     res.status(200).json(products);
   } catch (err) {
@@ -20,12 +20,10 @@ const getProduct = async (req, res) => {
 
     return res.status(200).json(product);
   } catch (err) {
-    return res
-      .status(400)
-      .json({
-        message:
-          "Error has occurred in getting Specific Products /productController",
-      });
+    return res.status(400).json({
+      message:
+        "Error has occurred in getting Specific Products /productController",
+    });
   }
 };
 
