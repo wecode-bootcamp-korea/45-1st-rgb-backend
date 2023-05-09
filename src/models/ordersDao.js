@@ -24,24 +24,19 @@ const getCartItemsTotal = async (userId) => {
   }
 };
 
-const placeOrder = async (
-  userId,
-  orderStatusId,
-  totalPrice,
-  cartIds,
-  cartItems
-) => {
+const placeOrder = async (userId, orderStatusId, totalPrice, cartsId, cartItems) => {
   const queryRunner = dataSource.createQueryRunner();
 
   await queryRunner.connect();
   await queryRunner.startTransaction();
+
   try {
     const createOrder = await queryRunner.query(
       `INSERT INTO orders (
-          user_id,
-          order_status_id,
-          total_price
-          ) VALUES (?,?,?)`,
+            users_id,
+            order_status_id,
+            total_price
+            ) VALUES (?,?,?)`,
       [userId, orderStatusId, totalPrice]
     );
 
@@ -57,24 +52,24 @@ const placeOrder = async (
       [orderItems]
     );
 
-    await queryRunner.query(
-      `UPDATE users 
-          SET 
-          users.points = users.points - ?
-          WHERE users.id = ? AND users.points > ?`,
+    await queryRunner.query(`
+      UPDATE users 
+      SET 
+      users.points = users.points - ?
+      WHERE users.id = ? AND users.points > ?`,
       [totalPrice, userId, totalPrice]
     );
 
-    await queryRunner.query(
-      `DELETE FROM carts WHERE user_id = ? AND id IN (?)`,
-      [userId, cartIds]
-    );
+    await queryRunner.query(`DELETE 
+              FROM cart 
+              WHERE user_id = ? AND id IN (?)`, [userId, cartsId]);
 
     await queryRunner.commitTransaction();
+
+    return createOrder.uuid;
   } catch (err) {
     await queryRunner.rollbackTransaction();
-    console.log(err);
-    throw new BaseError("Error executing SQL query", 500);
+    throw err;
   } finally {
     await queryRunner.release();
   }

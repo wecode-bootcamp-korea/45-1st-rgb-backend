@@ -1,4 +1,5 @@
 const ordersDao = require("../models/ordersDao");
+const usersDao = require("../models/usersDao");
 const BaseError = require("../models/BaseError");
 
 const placeOrder = async (userId, cartId, productsId, quantity) => {
@@ -7,6 +8,8 @@ const placeOrder = async (userId, cartId, productsId, quantity) => {
       throw new BaseError("Invalid request parameters", 400);
     }
 
+    const user = await usersDao.getUserById(userId); // retrieve user object
+    console.log(user)
     const cartItems = await ordersDao.getCartItemsTotal(userId);
     const totalPrice = cartItems.reduce(
       (total, item) => total + item.totalPrice,
