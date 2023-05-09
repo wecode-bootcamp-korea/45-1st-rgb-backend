@@ -42,13 +42,13 @@ const deleteProduct = async (req, res) => {
   try {
     const userId = req.userId;
 
-    const { productsId } = req.body;
+    const { cartId } = req.params;
 
     if (!userId) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
-    const result = await cartService.deleteProduct(userId, productsId);
+    const result = await cartService.deleteProduct(userId, cartId);
     return res.status(202).json({ result });
   } catch (err) {
     console.log(err);

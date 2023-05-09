@@ -10,8 +10,8 @@ const createCart = async (userId, productsId, quantity) => {
   return createCart;
 };
 
-const deleteProduct = async (userId, productsId) => {
-  const deleteProduct = await cartsDao.deleteProduct(userId, productsId);
+const deleteProduct = async (userId, cartId) => {
+  const deleteProduct = await cartsDao.deleteProduct(userId, cartId);
   return deleteProduct;
 };
 

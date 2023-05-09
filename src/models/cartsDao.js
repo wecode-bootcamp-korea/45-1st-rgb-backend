@@ -55,21 +55,20 @@ const createCart = async (userId, productsId, quantity) => {
   }
 };
 
-const deleteProduct = async (userId, productsId) => {
+const deleteProduct = async (userId, cartId) => {
   try {
-    console.log(userId, productsId);
     await dataSource.query(
       `DELETE
         FROM cart
-        WHERE users_id = ? AND products_id = ?`,
-      [userId, productsId]
+        WHERE users_id = ? AND cart.id = ?`,
+      [userId, cartId]
     );
 
     return await dataSource.query(
       `SELECT  
       cart.id,
       cart.products_id ,
-      SUM(cart.quantity) as cartSum, 
+      cart.quantity as count, 
       products.title, 
       products.products_size_left as width, 
       products.products_size_right as height, 

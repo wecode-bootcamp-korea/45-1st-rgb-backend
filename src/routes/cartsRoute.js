@@ -7,7 +7,7 @@ const { checkToken } = require("../middlewares/auth");
 
 router.get("", checkToken, cartsController.cartInfo);
 router.post("", checkToken, cartsController.createCart);
-router.delete("", checkToken, cartsController.deleteProduct);
+router.delete("/:cartId", checkToken, cartsController.deleteProduct);
 
 module.exports = {
   router,
