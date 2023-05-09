@@ -5,30 +5,29 @@ const getUserData = async (req, res) => {
     const userId = req.userId;
 
     if (!userId) {
-      return res.status(400).json({ message: 'USER_NOT_FOUND' });
+      return res.status(400).json({ message: "USER_NOT_FOUND" });
     }
 
     const user = await userService.getUserData(userId);
 
     return res.status(200).json({
-      message: 'SUCCESSFULLY_GET_USERS_DATA',
-      user
+      message: "SUCCESSFULLY_GET_USERS_DATA",
+      user,
     });
-
   } catch (err) {
     console.log(err);
     res.status(400).json({
       message: "Error_ getUserData /ordersController",
     });
   }
-}
+};
 
 const signUp = async (req, res) => {
   try {
-    const { email, password, firstName, lastName, subscription } = req.body;
+    const { email, password, firstName, lastName, subscrition } = req.body;
     const points = process.env.POINTS;
 
-    if (!email || !password || !firstName || !lastName || !subscription) {
+    if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
@@ -37,7 +36,7 @@ const signUp = async (req, res) => {
       password,
       firstName,
       lastName,
-      subscription,
+      subscrition,
       points
     );
     return res.status(201).json({ message: "SUCCESS_SIGNUP" });

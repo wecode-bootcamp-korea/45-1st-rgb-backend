@@ -70,7 +70,12 @@ const getUserById = async (userId) => {
 const addUserAddress = async (userId, address, postalCode, cellphone) => {
   try {
     await getUserById(userId);
-    const addUserAddressResult = await usersDao.addUserAddress(userId, address, postalCode, cellphone);
+    const addUserAddressResult = await usersDao.addUserAddress(
+      userId,
+      address,
+      postalCode,
+      cellphone
+    );
     return addUserAddressResult;
   } catch (err) {
     throw new Error("Error_ addUserAddress /usersService " + err.message);
@@ -82,5 +87,5 @@ module.exports = {
   signUp,
   logIn,
   getUserById,
-  addUserAddress
+  addUserAddress,
 };
