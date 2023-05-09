@@ -41,7 +41,6 @@ const signUp = async (
   );
 };
 
-
 const logIn = async (email, password) => {
   await pwValidationCheck(password);
   await emailValidationCheck(email);

@@ -1,80 +1,37 @@
 const ordersDao = require("../models/ordersDao");
-const productsDao = require("../models/productsDao")
+const BaseError = require("../models/BaseError");
 
-const getProductsPrices = async (products) => {
-  const productIds = products.map(product => product.productId);
-  const productPrices = await ordersDao.getProductsPrices(productIds);
-
-  const pricesById = {};
-  productPrices.forEach(product => {
-    pricesById[product.id] = product.price;
-  });
-
-  return products.map(product => ({
-    ...product,
-    price: pricesById[product.productId]
-  }));
-};
-
-const calculatePoints = (products) => {
-  let points = 0;
-  products.forEach(product => {
-    points += product.quantity * product.price; // Modify as needed
-  });
-  return points;
-};
-
-const updateUserPoints = async (userId, points) => {
+const placeOrder = async (userId, cartId, productsId, quantity) => {
   try {
-    await ordersDao.updateUserPoints(userId, points);
-  } catch (err) {
-    throw new Error("Error_ updateUserPoints /ordersService");
-  }
-};
-
-const updateProductStock = async (products) => {
-  try {
-    for (const product of products) {
-      const { productId, quantity } = product;
-
-      if (!productId || !quantity) {
-        throw new Error('Missing product ID or quantity');
-      }
-
-      const currentProduct = await productsDao.getProduct(productId);
-
-      if (!currentProduct) {
-        throw new Error(`Product not found for ID: ${productId}`);
-      }
-
-      const updatedQuantity = currentProduct.quantity - quantity;
-
-      if (updatedQuantity < 0) {
-        throw new Error(`Insufficient stock for product ID: ${productId}`);
-      }
-
-      await ordersDao.updateProductStock(productId, updatedQuantity);
+    if (!cartId || !productsId || !quantity) {
+      throw new BaseError("Invalid request parameters", 400);
     }
+
+    const cartItems = await ordersDao.getCartItemsTotal(userId);
+    const totalPrice = cartItems.reduce(
+      (total, item) => total + item.totalPrice,
+      0
+    );
+
+    if (totalPrice > user.points) {
+      throw new BaseError("Not enough points to place the order", 409);
+    }
+
+    const orderNumber = await ordersDao.placeOrder(
+      userId,
+      1, // hardcoding statusId to 1 for now
+      totalPrice,
+      cartItems.map((item) => item.cartId),
+      cartItems.map((item) => [item.productId, item.quantity])
+    );
+
+    return orderNumber;
   } catch (err) {
     console.log(err);
-    throw new Error(`Error_ updateProductStock /ordersService: ${err.message}`);
+    throw new BaseError("Error placing order", 500);
   }
 };
-
-const saveOrder = async (userId, orderNumber, products) => {
-  try {
-    await ordersDao.saveOrder(userId, orderNumber, products);
-  } catch (err) {
-    console.log(err);
-    throw new Error("Error_ saveOrder /ordersService");
-  }
-};
-
 
 module.exports = {
-  calculatePoints,
-  updateUserPoints,
-  updateProductStock,
-  saveOrder,
-  getProductsPrices
+  placeOrder
 };

@@ -1,71 +1,86 @@
 const dataSource = require("../models/dataSource");
+const BaseError = require("../models/BaseError");
 
-const getProductsPrices = async (productIds) => {
+const getCartItemsTotal = async (userId) => {
   try {
-    const products = await dataSource.query(
-      `SELECT id, price FROM products WHERE id IN (?)`,
-      [productIds]
+    const cartItems = await dataSource.query(
+      `SELECT c.products_id, c.quantity, p.price
+      FROM cart c
+      JOIN products p ON c.products_id = p.id
+      WHERE c.users_id = ?`,
+      [userId]
     );
-    return products;
+
+    return cartItems.map((item) => ({
+      productId: item.products_id,
+      quantity: item.quantity,
+      totalPrice: item.quantity * item.price
+    }));
   } catch (err) {
-    throw new Error("Error_ getProductsPrices /ordersDao " + err.message);
+    console.log(err);
+    const error = new Error(`Error getting cart items total`);
+    error.statusCode = 400;
+    throw error;
   }
 };
 
-const updateUserPoints = async (userId, points) => {
-  try {
-    await dataSource.query(
-      `UPDATE users
-      SET points = points - ?
-      WHERE id = ?`,
-      [points, userId]
-    );
-  } catch (err) {
-    throw new Error("Error updating user points in ordersDAO " + err.message);
-  }
-};
+const placeOrder = async (
+  userId,
+  orderStatusId,
+  totalPrice,
+  cartIds,
+  cartItems
+) => {
+  const queryRunner = dataSource.createQueryRunner();
 
-const updateProductStock = async (productId, updatedQuantity) => {
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
   try {
-    await dataSource.query(
-      `UPDATE products
-      SET quantity = ?
-      WHERE id = ?`,
-      [updatedQuantity, productId]
+    const createOrder = await queryRunner.query(
+      `INSERT INTO orders (
+          user_id,
+          order_status_id,
+          total_price
+          ) VALUES (?,?,?)`,
+      [userId, orderStatusId, totalPrice]
     );
-  } catch (err) {
-    throw new Error("Error updating product stock in ordersDAO " + err.message);
-  }
-};
 
-const saveOrder = async (userId, orderNumber, products) => {
-  try {
-    let totalPrice = 0;
+    const orderId = createOrder.insertId;
 
-    for (const product of products) {
-      const [price] = await getProductsPrices([product.productId]);
-      totalPrice += price.price * product.quantity;
-    }
-    const result = await dataSource.query(
-      `INSERT INTO orders (order_number, users_id, total_price, order_status_id) VALUES (?, ?, ?, ?)`,
-      [orderNumber, userId, totalPrice, 1]
+    const orderItems = cartItems.map((cartItem) => [orderId, ...cartItem]);
+
+    await queryRunner.query(
+      `INSERT INTO order_items (
+          orders_id,
+          products_id,
+          quantity) VALUES ?`,
+      [orderItems]
     );
-    const orderId = result.insertId;
-    for (const product of products) {
-      await dataSource.query(
-        `INSERT INTO order_items (orders_id, products_id, quantity) VALUES (?, ?, ?)`,
-        [orderId, product.productId, product.quantity]
-      );
-    }
+
+    await queryRunner.query(
+      `UPDATE users 
+          SET 
+          users.points = users.points - ?
+          WHERE users.id = ? AND users.points > ?`,
+      [totalPrice, userId, totalPrice]
+    );
+
+    await queryRunner.query(
+      `DELETE FROM carts WHERE user_id = ? AND id IN (?)`,
+      [userId, cartIds]
+    );
+
+    await queryRunner.commitTransaction();
   } catch (err) {
-    console.log(err.message);
-    throw new Error("Error_ saveOrder /ordersService");
+    await queryRunner.rollbackTransaction();
+    console.log(err);
+    throw new BaseError("Error executing SQL query", 500);
+  } finally {
+    await queryRunner.release();
   }
 };
 
 module.exports = {
-  getProductsPrices,
-  updateUserPoints,
-  updateProductStock,
-  saveOrder
+  getCartItemsTotal,
+  placeOrder
 };
