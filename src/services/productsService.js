@@ -14,7 +14,9 @@ const getProductsByCategories = async (limit, offset, category) => {
     const rows = await productsDao.getProductsByCategories(limit, offset, category);
     return rows;
   } catch (err) {
-    throw new Error("Error has occurred in getting all products in productsService/getAllProducts");
+    throw new Error(
+      "Error has occurred in getting all products in productsService/getAllProducts"
+    );
   }
 };
 
@@ -23,7 +25,9 @@ const getProduct = async (productId) => {
     const product = await productsDao.getProduct(productId);
     return product;
   } catch (error) {
-    throw new Error("Error has occurred in getting specific product in productsService/getProduct");
+    throw new Error(
+      "Error has occurred in getting specific product in productsService/getProduct"
+    );
   }
 };
 

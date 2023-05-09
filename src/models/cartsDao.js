@@ -86,8 +86,37 @@ const modifyQuantity = async (userId, cartId, count) => {
   }
 };
 
+const deleteCart = async (userId, cartId) => {
+  try {
+    await dataSource.query(
+      `DELETE
+        FROM cart
+        WHERE users_id = ? AND cart.id = ?`,
+      [userId, cartId]
+    );
+
+    return await dataSource.query(
+      `SELECT  
+      cart.id,
+      cart.products_id ,
+      cart.quantity as count 
+    FROM cart 
+    WHERE users_id = ?
+    GROUP BY products_id
+    `,
+      [userId]
+    );
+  } catch (err) {
+    console.log(err);
+    const error = new Error(`INVALID_DATA_INPUT`);
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 module.exports = {
   createCart,
   modifyQuantity,
   cartInfo,
+  deleteCart,
 };
