@@ -22,7 +22,7 @@ const getUserData = async (userId) => {
 
 const signUp = async (
   email,
-  password,
+  hashPassword,
   firstName,
   lastName,
   subscription,
@@ -39,7 +39,7 @@ const signUp = async (
         points
       )VALUES (?,?,?,?,?,?);
       `,
-      [email, password, firstName, lastName, subscription, points]
+      [email, hashPassword, firstName, lastName, subscription, points]
     );
   } catch (err) {
     console.log(err);

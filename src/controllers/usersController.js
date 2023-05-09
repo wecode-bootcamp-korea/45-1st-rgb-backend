@@ -24,10 +24,10 @@ const getUserData = async (req, res) => {
 
 const signUp = async (req, res) => {
   try {
-    const { email, password, firstName, lastName, subscrition } = req.body;
+    const { email, password, firstName, lastName, subscription } = req.body;
     const points = process.env.POINTS;
 
-    if (!email || !password || !firstName || !lastName) {
+    if (!email || !password || !firstName || !lastName || !subscription) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
@@ -36,7 +36,7 @@ const signUp = async (req, res) => {
       password,
       firstName,
       lastName,
-      subscrition,
+      subscription,
       points
     );
     return res.status(201).json({ message: "SUCCESS_SIGNUP" });
@@ -68,7 +68,7 @@ const addUserAddress = async (req, res) => {
     const { address, postalCode, cellphone } = req.body;
 
     if (!userId || !address || !postalCode || !cellphone) {
-      return res.status(400).json({ message: 'USER_INPUT_DATA_IS_NOT_ENOUGH' });
+      return res.status(400).json({ message: "USER_INPUT_DATA_IS_NOT_ENOUGH" });
     }
 
     await userService.addUserAddress(userId, address, postalCode, cellphone);
