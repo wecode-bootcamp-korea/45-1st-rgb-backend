@@ -1,6 +1,3 @@
-const dataSource = require("../models/dataSource")
+const dataSource = require("../models/dataSource");
 
-
-module.exports = {
-
-}
+module.exports = {};

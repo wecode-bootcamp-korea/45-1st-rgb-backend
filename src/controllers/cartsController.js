@@ -38,7 +38,7 @@ const cartInfo = async (req, res) => {
   }
 };
 
-const deleteProduct = async (req, res) => {
+const deleteCart = async (req, res) => {
   try {
     const userId = req.userId;
 
@@ -48,8 +48,31 @@ const deleteProduct = async (req, res) => {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
-    const result = await cartService.deleteProduct(userId, cartId);
-    return res.status(202).json({ result });
+    const result = await cartService.deleteCart(userId, cartId);
+    return res.status(200).json({ result });
+  } catch (err) {
+    console.log(err);
+    return res.status(err.statusCode || 500).json({ message: err.message });
+  }
+};
+
+const modifyQuantity = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { cartId } = req.params;
+    const { count } = req.body;
+
+    if (!userId || !cartId || !count) {
+      return res.status(400).json({ message: "KEY_ERROR" });
+    }
+
+    const modifyQuantity = await cartService.modifyQuantity(
+      userId,
+      cartId,
+      count
+    );
+
+    return res.status(200).json({ modifyQuantity });
   } catch (err) {
     console.log(err);
     return res.status(err.statusCode || 500).json({ message: err.message });
@@ -59,5 +82,6 @@ const deleteProduct = async (req, res) => {
 module.exports = {
   cartInfo,
   createCart,
-  deleteProduct,
+  deleteCart,
+  modifyQuantity,
 };
