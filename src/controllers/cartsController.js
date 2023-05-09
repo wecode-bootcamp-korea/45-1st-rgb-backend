@@ -41,20 +41,20 @@ const cartInfo = async (req, res) => {
 const modifyQuantity = async (req, res) => {
   try {
     const userId = req.userId;
-    const { productId } = req.params;
-    const { quantity } = req.body;
+    const { cartId } = req.params;
+    const { count } = req.body;
 
-    if (!userId || !productId || !quantity) {
+    if (!userId || !cartId || !count) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
     const modifyQuantity = await cartService.modifyQuantity(
       userId,
-      productId,
-      quantity
+      cartId,
+      count
     );
 
-    return res.status(201).json({ modifyQuantity });
+    return res.status(200).json({ modifyQuantity });
   } catch (err) {
     console.log(err);
     return res.status(err.statusCode || 500).json({ message: err.message });

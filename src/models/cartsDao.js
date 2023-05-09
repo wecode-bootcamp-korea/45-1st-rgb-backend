@@ -6,13 +6,13 @@ const cartInfo = async (userId) => {
       `SELECT 
         cart.id,
         cart.products_id ,
-        SUM(cart.quantity) as cartSum, 
+        cart.quantity as count, 
         products.title, 
         products.products_size_left as width, 
         products.products_size_right as height, 
         products_images.image_url as image,
         products.quantity as inventory, 
-        products.price as individualPrice 
+        products.price as price 
           FROM products JOIN cart ON cart.products_id = products.id 
           JOIN products_images ON products.id = products_images.products_id
           WHERE users_id = ?
@@ -38,9 +38,10 @@ const createCart = async (userId, productsId, quantity) => {
      `,
       [userId, productsId, quantity]
     );
-    console.log(userId);
+
     return await dataSource.query(
       `SELECT 
+        cart.id,
         users_id,
         products_id,
         quantity
@@ -57,29 +58,23 @@ const createCart = async (userId, productsId, quantity) => {
   }
 };
 
-const modifyQuantity = async (userId, productId, quantity) => {
+const modifyQuantity = async (userId, cartId, count) => {
   try {
     await dataSource.query(
       `UPDATE cart
         SET quantity = ?
-        WHERE users_id= ? AND products_id = ?
+        WHERE users_id= ? AND cart.id = ?
       `,
-      [quantity, userId, productId]
+      [count, userId, cartId]
     );
 
     return await dataSource.query(
       `SELECT 
         cart.id,
         cart.products_id, 
-        cart.quantity, 
-        products.title, 
-        products.products_size_left as width, 
-        products.products_size_right as height, 
-        products.quantity as inventory, 
-        products.price as individualPrice 
-      FROM cart JOIN products ON cart.products_id = products.id 
+        cart.quantity as count
+      FROM cart 
       WHERE users_id = ?
-        GROUP BY products_id
         `,
       [userId]
     );
