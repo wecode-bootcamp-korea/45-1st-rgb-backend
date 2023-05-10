@@ -1,39 +1,53 @@
-const ordersDao = require("../models/ordersDao");
-const usersDao = require("../models/usersDao");
-const BaseError = require("../models/BaseError");
+const { v4: uuidv4 } = require("uuid");
+const { cartInfo } = require("../models/cartsDao");
+const { getUserById } = require("../models/usersDao");
+const { getProduct } = require("../models/productsDao");
+const orderDao = require("../models/ordersDao");
 
-const placeOrder = async (userId, cartId, productsId, quantity) => {
+const placeOrder = async (userId) => {
   try {
-    if (!cartId || !productsId || !quantity) {
-      throw new BaseError("Invalid request parameters", 400);
+    const carts = await cartInfo(userId);
+
+    if (!carts) {
+      throw new Error("Invalid request parameters");
     }
 
-    const user = await usersDao.getUserById(userId); // retrieve user object
-    console.log(user)
-    const cartItems = await ordersDao.getCartItemsTotal(userId);
-    const totalPrice = cartItems.reduce(
-      (total, item) => total + item.totalPrice,
-      0
-    );
-
-    if (totalPrice > user.points) {
-      throw new BaseError("Not enough points to place the order", 409);
+    const user = await getUserById(userId);
+    if (!user) {
+      throw new Error("User not found");
     }
 
-    const orderNumber = await ordersDao.placeOrder(
-      userId,
-      1, // hardcoding statusId to 1 for now
-      totalPrice,
-      cartItems.map((item) => item.cartId),
-      cartItems.map((item) => [item.productId, item.quantity])
-    );
+    let totalCartPrice = 0;
+    const cartItems = [];
 
-    return orderNumber;
+    for (const cart of carts) {
+      const product = await getProduct(cart.products_id);
+      const parsedPrice = parseFloat(product.price);
+      const cartQuantity = cart.count || 0;
+
+      if (cartQuantity > product.quantity) {
+        throw new Error(`Not enough stock for product with ID ${cart.products_id}`);
+      }
+
+      const productTotal = parsedPrice * cartQuantity;
+      totalCartPrice += productTotal;
+      cartItems.push([cart.products_id, cart.count]);
+    }
+
+    if (user.points < totalCartPrice) {
+      throw new Error("Not enough points to purchase all cart items");
+    }
+
+    const orderNumber = uuidv4();
+    const orderStatusId = 2;
+    const totalOrderPrice = totalCartPrice;
+    return await orderDao.placeOrder(userId, orderStatusId, totalOrderPrice, cartItems, orderNumber);
   } catch (err) {
     console.log(err);
-    throw new BaseError("Error placing order", 500);
+    throw new Error("Error in orderService");
   }
 };
+
 
 module.exports = {
   placeOrder

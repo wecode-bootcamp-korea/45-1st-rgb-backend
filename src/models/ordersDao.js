@@ -1,72 +1,72 @@
 const dataSource = require("../models/dataSource");
-const BaseError = require("../models/BaseError");
 
-const getCartItemsTotal = async (userId) => {
-  try {
-    const cartItems = await dataSource.query(
-      `SELECT c.products_id, c.quantity, p.price
-      FROM cart c
-      JOIN products p ON c.products_id = p.id
-      WHERE c.users_id = ?`,
-      [userId]
-    );
-
-    return cartItems.map((item) => ({
-      productId: item.products_id,
-      quantity: item.quantity,
-      totalPrice: item.quantity * item.price
-    }));
-  } catch (err) {
-    console.log(err);
-    const error = new Error(`Error getting cart items total`);
-    error.statusCode = 400;
-    throw error;
-  }
-};
-
-const placeOrder = async (userId, orderStatusId, totalPrice, cartsId, cartItems) => {
+const placeOrder = async (userId, orderStatusId, totalPrice, cartItems, orderNumber) => {
   const queryRunner = dataSource.createQueryRunner();
 
   await queryRunner.connect();
   await queryRunner.startTransaction();
 
   try {
+    // First, create a new order record in the orders table
     const createOrder = await queryRunner.query(
       `INSERT INTO orders (
             users_id,
             order_status_id,
-            total_price
-            ) VALUES (?,?,?)`,
-      [userId, orderStatusId, totalPrice]
+            total_price,
+            uuid
+            ) VALUES (?,?,?,?)`,
+      [userId, orderStatusId, totalPrice, orderNumber]
     );
 
-    const orderId = createOrder.insertId;
-
-    const orderItems = cartItems.map((cartItem) => [orderId, ...cartItem]);
+    // Then, create order items for each item in the cart
+    const orderItemsWithOrderId = cartItems.map((item) => [createOrder.insertId, ...item]);
 
     await queryRunner.query(
       `INSERT INTO order_items (
           orders_id,
           products_id,
           quantity) VALUES ?`,
-      [orderItems]
+      [orderItemsWithOrderId]
     );
 
-    await queryRunner.query(`
-      UPDATE users 
-      SET 
-      users.points = users.points - ?
-      WHERE users.id = ? AND users.points > ?`,
-      [totalPrice, userId, totalPrice]
+    // Update the product quantity
+    for (const item of cartItems) {
+      const [product] = await dataSource.query(
+        `SELECT quantity FROM products WHERE id = ?`,
+        [item[0]]
+      );
+      const newQuantity = product.quantity - item[1];
+      await queryRunner.query(`
+        UPDATE products
+        SET quantity = ?
+        WHERE id = ?
+      `, [newQuantity, item[0]]);
+    }
+
+    const user = await dataSource.query(
+      `SELECT points FROM users WHERE id = ?`,
+      [userId]
     );
 
+    if (user && user[0] && user[0].points) {
+      // Deduct the total price from the user's points
+      await queryRunner.query(`
+          UPDATE users 
+          SET 
+          points = ? 
+          WHERE id = ?`,
+        [user[0].points - totalPrice, userId]
+      );
+    }
+
+    // Finally, delete the cart items
     await queryRunner.query(`DELETE 
-              FROM cart 
-              WHERE user_id = ? AND id IN (?)`, [userId, cartsId]);
+              FROM carts
+              WHERE users_id = ?`, [userId]);
 
     await queryRunner.commitTransaction();
 
-    return createOrder.uuid;
+    return createOrder.insertId;
   } catch (err) {
     await queryRunner.rollbackTransaction();
     throw err;
@@ -76,6 +76,5 @@ const placeOrder = async (userId, orderStatusId, totalPrice, cartsId, cartItems)
 };
 
 module.exports = {
-  getCartItemsTotal,
   placeOrder
 };

@@ -11,7 +11,7 @@ const getUserData = async (userId) => {
     const userData = await usersDao.getUserData(userId);
     return userData;
   } catch (err) {
-    throw new Error("Error_ getUserData /ordersService");
+    throw new Error("Error_ getUserData /usersService");
   }
 };
 
@@ -67,13 +67,13 @@ const getUserById = async (userId) => {
   return user;
 };
 
-const addUserAddress = async (userId, address, postalCode, cellphone) => {
+const addUserAddress = async (userId, address, postalcode, cellphone) => {
   try {
     await getUserById(userId);
     const addUserAddressResult = await usersDao.addUserAddress(
       userId,
       address,
-      postalCode,
+      postalcode,
       cellphone
     );
     return addUserAddressResult;
