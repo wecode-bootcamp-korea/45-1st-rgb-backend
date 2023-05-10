@@ -48,7 +48,11 @@ const placeOrder = async (userId) => {
   }
 };
 
+const getOrderData = async (orderId) => {
+  return await orderDao.getOrderData(orderId);
+};
 
 module.exports = {
-  placeOrder
+  placeOrder,
+  getOrderData
 };

@@ -10,6 +10,19 @@ const placeOrder = async (req, res) => {
   });
 };
 
+const getOrderData = async (req, res) => {
+  const orderNumber = req.params.orderNumber;
+  try {
+    const orderData = await ordersService.getOrderData(orderNumber);
+    res.status(200).json(orderData);
+  } catch (err) {
+    res.status(404).json({
+      message: "Order not found",
+    });
+  }
+};
+
 module.exports = {
-  placeOrder
+  placeOrder,
+  getOrderData,
 };

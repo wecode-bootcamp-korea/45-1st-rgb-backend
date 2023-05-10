@@ -66,7 +66,7 @@ const placeOrder = async (userId, orderStatusId, totalPrice, cartItems, orderNum
 
     await queryRunner.commitTransaction();
 
-    return createOrder.insertId;
+    return orderNumber;
   } catch (err) {
     await queryRunner.rollbackTransaction();
     throw err;
@@ -75,6 +75,35 @@ const placeOrder = async (userId, orderStatusId, totalPrice, cartItems, orderNum
   }
 };
 
+const getOrderData = async (orderId) => {
+  const query = `
+    SELECT orders.id, orders.users_id, orders.total_price, orders.uuid, orders.order_status_id, 
+      order_items.products_id, order_items.quantity
+    FROM orders
+    JOIN order_items ON orders.id = order_items.orders_id
+    WHERE orders.uuid = ?`;
+
+  const result = await dataSource.query(query, [orderId]);
+  if (!result || result.length === 0) {
+    throw new Error("Order not found");
+  }
+
+  const order = {
+    id: result[0].id,
+    users_id: result[0].users_id,
+    total_price: result[0].total_price,
+    uuid: result[0].uuid,
+    order_status_id: result[0].order_status_id,
+    products: result.map((item) => ({
+      product_id: item.products_id,
+      quantity: item.quantity,
+    })),
+  };
+
+  return order;
+};
+
 module.exports = {
-  placeOrder
+  placeOrder,
+  getOrderData
 };
