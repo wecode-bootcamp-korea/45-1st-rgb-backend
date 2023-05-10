@@ -3,7 +3,7 @@ const dataSource = require("../models/dataSource");
 const getUserData = async (userId) => {
   try {
     const [user] = await dataSource.query(
-      `SELECT id, email, subscription, first_name, last_name, profile_image_url, address, postalcode, cellphone, sex, points, created_at, updated_at, is_active
+      `SELECT id, email, subscription, first_name, last_name, profile_image_url, address, postalcode, cellphone, sex, points, created_at, updated_at, deactive
       FROM users
       WHERE id = ?`,
       [userId]

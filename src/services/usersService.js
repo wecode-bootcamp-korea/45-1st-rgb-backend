@@ -31,13 +31,22 @@ const signUp = async (
 
   const hashPassword = await bcrypt.hash(password, salt);
 
-  return await usersDao.signUp(
+  await usersDao.signUp(
     email,
     hashPassword,
     firstName,
     lastName,
     subscription,
     points
+  );
+
+  const user = await usersDao.getUserByEmail(email);
+
+  return jwt.sign(
+    {
+      userId: user.id,
+    },
+    process.env.SECRETKEY
   );
 };
 

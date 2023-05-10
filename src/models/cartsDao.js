@@ -4,19 +4,20 @@ const cartInfo = async (userId) => {
   try {
     return await dataSource.query(
       `SELECT 
-        cart.id,
-        cart.products_id ,
-        cart.quantity as count, 
+        carts.id,
+        carts.products_id ,
+        carts.quantity as count, 
         products.title, 
         products.products_size_left as width, 
         products.products_size_right as height, 
         products_images.image_url as image,
         products.quantity as inventory, 
         products.price as price 
-          FROM products JOIN cart ON cart.products_id = products.id 
+          FROM products 
+          JOIN carts ON carts.products_id = products.id 
           JOIN products_images ON products.id = products_images.products_id
           WHERE users_id = ?
-          GROUP BY products_id,products_images.image_url
+          GROUP BY products_id,products_images.image_url,carts.id
       `,
       [userId]
     );
@@ -30,7 +31,7 @@ const cartInfo = async (userId) => {
 const createCart = async (userId, productsId, quantity) => {
   try {
     const result = await dataSource.query(
-      `INSERT INTO cart 
+      `INSERT INTO carts
       (users_id, products_id , quantity) 
       VALUE (? , ? , ?) 
       ON DUPLICATE KEY 
@@ -41,11 +42,11 @@ const createCart = async (userId, productsId, quantity) => {
 
     return await dataSource.query(
       `SELECT 
-        cart.id,
+        carts.id,
         users_id,
         products_id,
         quantity
-        FROM cart
+        FROM carts
         WHERE users_id = ?
       `,
       [userId]
@@ -61,7 +62,7 @@ const createCart = async (userId, productsId, quantity) => {
 const modifyQuantity = async (userId, cartId, count) => {
   try {
     await dataSource.query(
-      `UPDATE cart
+      `UPDATE carts
         SET quantity = ?
         WHERE users_id= ? AND cart.id = ?
       `,
@@ -70,10 +71,10 @@ const modifyQuantity = async (userId, cartId, count) => {
 
     return await dataSource.query(
       `SELECT 
-        cart.id,
-        cart.products_id, 
-        cart.quantity as count
-      FROM cart 
+        carts.id,
+        carts.products_id, 
+        carts.quantity as count
+      FROM carts
       WHERE users_id = ?
         `,
       [userId]
@@ -90,17 +91,17 @@ const deleteCart = async (userId, cartId) => {
   try {
     await dataSource.query(
       `DELETE
-        FROM cart
-        WHERE users_id = ? AND cart.id = ?`,
+        FROM carts
+        WHERE users_id = ? AND carts.id = ?`,
       [userId, cartId]
     );
 
     return await dataSource.query(
       `SELECT  
-      cart.id,
-      cart.products_id ,
-      cart.quantity as count 
-    FROM cart 
+      carts.id,
+      carts.products_id ,
+      carts.quantity as count 
+    FROM carts 
     WHERE users_id = ?
     GROUP BY products_id
     `,

@@ -30,8 +30,7 @@ const signUp = async (req, res) => {
     if (!email || !password || !firstName || !lastName || !subscription) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
-
-    await userService.signUp(
+    const accessToken = await userService.signUp(
       email,
       password,
       firstName,
@@ -39,7 +38,8 @@ const signUp = async (req, res) => {
       subscription,
       points
     );
-    return res.status(201).json({ message: "SUCCESS_SIGNUP" });
+
+    return res.status(201).json({ accessToken });
   } catch (err) {
     console.log(err);
     return res.status(err.statusCode || 500).json({ message: err.message });
