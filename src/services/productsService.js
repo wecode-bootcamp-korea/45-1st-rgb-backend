@@ -1,8 +1,17 @@
 const productsDao = require("../models/productsDao");
 
-const getAllProducts = async (limit, offset, category) => {
+const getAllProducts = async (limit, offset) => {
   try {
-    const rows = await productsDao.getAllProducts(limit, offset, category);
+    const rows = await productsDao.getAllProducts(limit, offset);
+    return rows;
+  } catch (err) {
+    throw new Error("Error has occurred in getting all products in productsService/getAllProducts");
+  }
+};
+
+const getProductsByCategories = async (limit, offset, category) => {
+  try {
+    const rows = await productsDao.getProductsByCategories(limit, offset, category);
     return rows;
   } catch (err) {
     throw new Error(
@@ -24,5 +33,6 @@ const getProduct = async (productId) => {
 
 module.exports = {
   getAllProducts,
+  getProductsByCategories,
   getProduct,
 };

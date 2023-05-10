@@ -16,7 +16,7 @@ const getUserData = async (userId) => {
     }
   } catch (err) {
     console.log(err);
-    throw new Error("Error getting user data in ordersDAO " + err.message);
+    throw new Error("Error getting user data in usersDAO " + err.message);
   }
 };
 
@@ -76,7 +76,7 @@ const getUserByEmail = async (email) => {
 const getUserById = async (userId) => {
   try {
     const [user] = await dataSource.query(
-      `SELECT id
+      `SELECT id, points
       FROM users
       WHERE id = ?`,
       [userId]
@@ -88,7 +88,8 @@ const getUserById = async (userId) => {
   }
 };
 
-const addUserAddress = async (userId, address, postalCode, cellphone) => {
+
+const addUserAddress = async (userId, address, postalcode, cellphone) => {
   try {
     await dataSource.query(
       `UPDATE users
@@ -97,7 +98,7 @@ const addUserAddress = async (userId, address, postalCode, cellphone) => {
           address = ?,
           postalcode = ?
         WHERE id = ?`,
-      [cellphone, address, postalCode, userId]
+      [cellphone, address, postalcode, userId]
     );
   } catch (err) {
     console.log(err);

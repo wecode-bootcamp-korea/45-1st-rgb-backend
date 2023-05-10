@@ -4,6 +4,8 @@ const { checkToken } = require("../middlewares/auth");
 
 const router = express.Router();
 
+router.post("/", checkToken, ordersController.placeOrder);
+
 module.exports = {
   router,
 };

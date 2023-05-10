@@ -17,7 +17,7 @@ const getUserData = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(400).json({
-      message: "Error_ getUserData /ordersController",
+      message: "Error_ getUserData /usersController",
     });
   }
 };
@@ -65,13 +65,13 @@ const logIn = async (req, res) => {
 const addUserAddress = async (req, res) => {
   try {
     const userId = req.userId;
-    const { address, postalCode, cellphone } = req.body;
+    const { address, postalcode, cellphone } = req.body;
 
-    if (!userId || !address || !postalCode || !cellphone) {
+    if (!userId || !address || !postalcode || !cellphone) {
       return res.status(400).json({ message: "USER_INPUT_DATA_IS_NOT_ENOUGH" });
     }
 
-    await userService.addUserAddress(userId, address, postalCode, cellphone);
+    await userService.addUserAddress(userId, address, postalcode, cellphone);
 
     return res.status(200).json({ message: "Address added successfully" });
   } catch (err) {

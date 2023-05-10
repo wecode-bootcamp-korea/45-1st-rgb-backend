@@ -1,6 +1,35 @@
 const dataSource = require("../models/dataSource");
 
-const getAllProducts = async (limit, offset, category) => {
+const getAllProducts = async (limit, offset) => {
+  try {
+    const rows = await dataSource.query(
+      `SELECT 
+        products.id,
+        products.categories_id,
+        products.artist_name,
+        products.title,
+        products.description,
+        products.products_size_left,
+        products.products_size_right,
+        products.price,
+        products.material,
+        products.quantity,
+        products.max_quantity,
+        JSON_ARRAYAGG(products_images.image_url) as image_urls
+      FROM products 
+      LEFT JOIN products_images ON products_images.products_id = products.id
+      GROUP BY products.id
+      LIMIT ? OFFSET ?;
+      `,
+      [parseInt(limit), parseInt(offset)]
+    );
+    return rows;
+  } catch (err) {
+    throw new Error("Error has occurred in getting products in productsDao/getAllProducts");
+  }
+};
+
+const getProductsByCategories = async (limit, offset, category) => {
   try {
     const categoryNum = isNaN(category) ? null : parseInt(category);
     const rows = await dataSource.query(
@@ -31,8 +60,6 @@ const getAllProducts = async (limit, offset, category) => {
     throw new Error("Error has occurred in getting products in productsDao/getAllProducts");
   }
 };
-
-
 
 const getProduct = async (productId) => {
   try {
@@ -65,6 +92,7 @@ const getProduct = async (productId) => {
 };
 
 module.exports = {
+  getProductsByCategories,
   getAllProducts,
   getProduct,
 };

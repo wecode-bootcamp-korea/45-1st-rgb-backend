@@ -28,6 +28,7 @@ const cartInfo = async (userId) => {
     throw error;
   }
 };
+
 const createCart = async (userId, productsId, quantity) => {
   try {
     const result = await dataSource.query(
@@ -64,7 +65,7 @@ const modifyQuantity = async (userId, cartId, count) => {
     await dataSource.query(
       `UPDATE carts
         SET quantity = ?
-        WHERE users_id= ? AND cart.id = ?
+        WHERE users_id= ? AND carts.id = ?
       `,
       [count, userId, cartId]
     );
