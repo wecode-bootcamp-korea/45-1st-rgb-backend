@@ -13,10 +13,11 @@ const cartInfo = async (userId) => {
         products_images.image_url as image,
         products.quantity as inventory, 
         products.price as price 
-          FROM products JOIN carts ON carts.products_id = products.id 
+          FROM products 
+          JOIN carts ON carts.products_id = products.id 
           JOIN products_images ON products.id = products_images.products_id
           WHERE users_id = ?
-          GROUP BY carts.id, carts.products_id, carts.quantity, products.title, products.products_size_left, products.products_size_right, products_images.image_url, products.quantity, products.price
+          GROUP BY products_id,products_images.image_url,carts.id
       `,
       [userId]
     );
@@ -28,11 +29,10 @@ const cartInfo = async (userId) => {
   }
 };
 
-
 const createCart = async (userId, productsId, quantity) => {
   try {
     const result = await dataSource.query(
-      `INSERT INTO carts 
+      `INSERT INTO carts
       (users_id, products_id , quantity) 
       VALUE (? , ? , ?) 
       ON DUPLICATE KEY 

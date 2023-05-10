@@ -10,7 +10,7 @@ function pwValidationCheck(password) {
 function emailValidationCheck(email) {
   const emailValidation = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailValidation.test(email)) {
-    const err = new Error("PASSWORD_OR_EMAIL_IS_NOT_VALID");
+    const err = new Error("EMAIL_OR_PASSWORD_IS_NOT_VALID");
     err.statusCode = 409;
     throw err;
   }
