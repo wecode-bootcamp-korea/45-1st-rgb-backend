@@ -75,6 +75,47 @@ const placeOrder = async (userId, orderStatusId, totalPrice, cartItems, orderNum
   }
 };
 
+const getOrderData = async (orderId) => {
+  try {
+    const [order] = await dataSource.query(
+      `SELECT 
+        orders.id as order_id,
+        orders.created_at as order_date,
+        orders.total_price,
+        order_status.name as order_status_name,
+        users.first_name,
+        users.last_name,
+        users.email,
+        users.address,
+        users.postalcode,
+        users.points
+      FROM orders
+      INNER JOIN users ON users.id = orders.users_id
+      INNER JOIN order_status ON order_status.id = orders.order_status_id
+      WHERE orders.id = ?`,
+      [orderId]
+    );
+
+    const orderItems = await dataSource.query(
+      `SELECT 
+        products.title,
+        order_items.quantity as count,
+        products.price,
+        products_images.product_id
+      FROM order_items
+      INNER JOIN products ON products.id = order_items.products_id
+      INNER JOIN products_images ON products_images.products_id = products.id
+      WHERE order_items.orders_id = ?`,
+      [orderId]
+    );
+
+    return { order, orderItems };
+  } catch (err) {
+    throw new Error("Error has occurred in getting order data in ordersDao/getOrderData");
+  }
+};
+
 module.exports = {
-  placeOrder
+  placeOrder,
+  getOrderData
 };
