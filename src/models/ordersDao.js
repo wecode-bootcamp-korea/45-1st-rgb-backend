@@ -66,7 +66,7 @@ const placeOrder = async (userId, orderStatusId, totalPrice, cartItems, orderNum
 
     await queryRunner.commitTransaction();
 
-    return createOrder.insertId;
+    return orderNumber;
   } catch (err) {
     await queryRunner.rollbackTransaction();
     throw err;
@@ -81,7 +81,7 @@ const getOrderData = async (orderId) => {
       order_items.products_id, order_items.quantity
     FROM orders
     JOIN order_items ON orders.id = order_items.orders_id
-    WHERE orders.id = ?`;
+    WHERE orders.uuid = ?`;
 
   const result = await dataSource.query(query, [orderId]);
   if (!result || result.length === 0) {
