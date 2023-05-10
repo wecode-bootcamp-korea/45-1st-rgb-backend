@@ -12,7 +12,6 @@ const placeOrder = async (req, res) => {
 
 const getOrderData = async (req, res) => {
   const orderNumber = req.params.orderNumber;
-  console.log(orderNumber)
   try {
     const orderData = await ordersService.getOrderData(orderNumber);
     res.status(200).json(orderData);
