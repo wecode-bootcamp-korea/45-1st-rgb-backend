@@ -77,11 +77,25 @@ const placeOrder = async (userId, orderStatusId, totalPrice, cartItems, orderNum
 
 const getOrderData = async (orderId) => {
   const query = `
-    SELECT orders.id, orders.users_id, orders.total_price, orders.uuid, orders.order_status_id, 
-      order_items.products_id, order_items.quantity
-    FROM orders
-    JOIN order_items ON orders.id = order_items.orders_id
-    WHERE orders.uuid = ?`;
+  SELECT
+    o.id AS id,
+    o.users_id AS usersId,
+    o.total_price AS totalPrice,
+    o.uuid,
+    o.order_status_id, 
+    oi.products_id,
+    oi.quantity,
+    u.first_name AS firstName,
+    u.last_name AS lastName,
+    u.email,
+    u.address,
+    u.postalcode,
+    u.points
+  FROM orders o
+  JOIN order_items oi ON o.id = oi.orders_id
+  JOIN users u ON o.users_id = u.id
+  JOIN products p ON oi.products_id = p.id
+  WHERE o.uuid = ?`;
 
   const result = await dataSource.query(query, [orderId]);
   if (!result || result.length === 0) {
@@ -90,18 +104,27 @@ const getOrderData = async (orderId) => {
 
   const order = {
     id: result[0].id,
-    users_id: result[0].users_id,
-    total_price: result[0].total_price,
+    users_id: result[0].usersId,
+    total_price: result[0].totalPrice,
     uuid: result[0].uuid,
     order_status_id: result[0].order_status_id,
     products: result.map((item) => ({
       product_id: item.products_id,
       quantity: item.quantity,
     })),
+    user: {
+      first_name: result[0].firstName,
+      last_name: result[0].lastName,
+      email: result[0].email,
+      address: result[0].address,
+      postalcode: result[0].postalcode,
+      points: result[0].points,
+    },
   };
 
   return order;
 };
+
 
 module.exports = {
   placeOrder,
