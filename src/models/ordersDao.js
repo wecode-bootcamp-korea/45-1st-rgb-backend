@@ -85,6 +85,7 @@ const getOrderData = async (orderId) => {
     o.order_status_id, 
     oi.products_id,
     oi.quantity,
+    p.title AS productName,
     u.first_name AS firstName,
     u.last_name AS lastName,
     u.email,
@@ -98,8 +99,9 @@ const getOrderData = async (orderId) => {
   WHERE o.uuid = ?`;
 
   const result = await dataSource.query(query, [orderId]);
+  console.log(result)
   if (!result || result.length === 0) {
-    throw new Error("Order not found");
+    return error("Order not found or invalid orderId");
   }
 
   const order = {
@@ -110,6 +112,7 @@ const getOrderData = async (orderId) => {
     order_status_id: result[0].order_status_id,
     products: result.map((item) => ({
       product_id: item.products_id,
+      product_title: item.productName,
       quantity: item.quantity,
     })),
     user: {
@@ -124,6 +127,7 @@ const getOrderData = async (orderId) => {
 
   return order;
 };
+
 
 
 module.exports = {

@@ -22,6 +22,7 @@ const getOrderData = async (req, res) => {
     const orderData = await ordersService.getOrderData(orderNumber);
     res.status(200).json(orderData);
   } catch (err) {
+    console.log(err)
     res.status(404).json({
       message: "Order not found",
     });
