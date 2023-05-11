@@ -86,6 +86,7 @@ const getOrderData = async (orderId) => {
     oi.products_id,
     oi.quantity,
     p.title AS productName,
+    pi.image_url AS image_url,
     u.first_name AS firstName,
     u.last_name AS lastName,
     u.email,
@@ -96,12 +97,13 @@ const getOrderData = async (orderId) => {
   JOIN order_items oi ON o.id = oi.orders_id
   JOIN users u ON o.users_id = u.id
   JOIN products p ON oi.products_id = p.id
+  JOIN products_images pi ON pi.products_id = p.id
   WHERE o.uuid = ?`;
 
   const result = await dataSource.query(query, [orderId]);
   console.log(result)
   if (!result || result.length === 0) {
-    return error("Order not found or invalid orderId");
+    throw new Error("Order not found or invalid orderId");
   }
 
   const order = {
@@ -111,6 +113,7 @@ const getOrderData = async (orderId) => {
     uuid: result[0].uuid,
     order_status_id: result[0].order_status_id,
     products: result.map((item) => ({
+      image_url: item.image_url,
       product_id: item.products_id,
       product_title: item.productName,
       quantity: item.quantity,
@@ -127,8 +130,6 @@ const getOrderData = async (orderId) => {
 
   return order;
 };
-
-
 
 module.exports = {
   placeOrder,
