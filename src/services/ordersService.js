@@ -35,7 +35,7 @@ const placeOrder = async (userId) => {
     }
 
     if (user.points < totalCartPrice) {
-      throw new Error("Not enough points to purchase all cart items");
+      return { error: "Not enough points to purchase all cart items" };
     }
 
     const orderNumber = uuidv4();
@@ -44,7 +44,7 @@ const placeOrder = async (userId) => {
     return await orderDao.placeOrder(userId, orderStatusId, totalOrderPrice, cartItems, orderNumber);
   } catch (err) {
     console.log(err);
-    throw new Error("Error in orderService");
+    return Error("Error in orderService");
   }
 };
 

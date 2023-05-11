@@ -2,13 +2,20 @@ const ordersService = require("../services/ordersService");
 
 const placeOrder = async (req, res) => {
   const userId = req.userId;
-  const orderNumber = await ordersService.placeOrder(userId);
+  const orderResult = await ordersService.placeOrder(userId);
 
-  res.status(200).json({
-    message: "Order placed successfully",
-    orderNumber: orderNumber
-  });
+  if (orderResult.error) {
+    res.status(400).json({
+      message: orderResult.error
+    });
+  } else {
+    res.status(200).json({
+      message: "Order placed successfully",
+      orderNumber: orderResult
+    });
+  }
 };
+
 
 const getOrderData = async (req, res) => {
   const orderNumber = req.params.orderNumber;
