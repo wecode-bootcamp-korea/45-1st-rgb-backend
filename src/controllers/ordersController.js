@@ -5,15 +5,14 @@ const placeOrder = async (req, res) => {
   const orderResult = await ordersService.placeOrder(userId);
 
   if (orderResult.error) {
-    res.status(400).json({
+    return res.status(400).json({
       message: orderResult.error
     });
-  } else {
-    res.status(200).json({
-      message: "Order placed successfully",
-      orderNumber: orderResult
-    });
   }
+  res.status(200).json({
+    message: "Order placed successfully",
+    orderNumber: orderResult
+  });
 };
 
 
