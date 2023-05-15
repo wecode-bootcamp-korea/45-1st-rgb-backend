@@ -21,7 +21,7 @@ back-end : 윤해찬 , 탁호진
 
 백엔드
 
-JavaScript / NodeJs / Mysql 
+JavaScript / NodeJS / Mysql 
 
 ---------------------------------------
 
