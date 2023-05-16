@@ -3,6 +3,7 @@
 
 .env
 db/schema.sql
+rgbkey.pem
 
 ### Linux ###
 *~
