@@ -67,7 +67,7 @@ JavaScript / NodeJS / Mysql
 
 ##layerd pattern 적용
 - 유지,보수 추후 확장성을 고려하여 layerd pattern 적용
-- 
+- .env 사용으로 전역변수 설정 및 보안 관련부분 고려
 
 ## Login/Sign Up
 - 유효성 검사 불만족 시 EMAIL OR PASSWORD INVALID 문구 출력
@@ -77,7 +77,11 @@ JavaScript / NodeJS / Mysql
 
 ## Product List/Detail
 #### 판매중인 상품들을 필터 적용하여 사용자의 접근성을 높인 상품리스트/페이지 <br>
-- 
+- 상품 전체 가져오기 또는 상품디테일 가져오기 옵션
+- 상품 불러오기시 category 테이블 참조
+- product_images 테이블 따로 관리로 JSONARRAY로 프로덕트 아이디 별 여러 사진 불러오기 가능
+- query parameter 지원으로 프론트에서 pagenation 가능
+- 상품 갯수 및 재고 테이블에서 관리 (품절시 품절된 부분에 대해 표시 가능)
 
 
 ## Cart
@@ -85,11 +89,14 @@ JavaScript / NodeJS / Mysql
 - 장바구니 GET, PATCH, DELETE API로 상품 효율적 관리 <br>
 
 ## Order/Payment
--
+- transaction 도입
+- 재고 수량 확인후, 재고가 있을때만 결제가 가능
+- 결제후 유저의 포인트 차감기능
+- UUID로 결제 완료후 안전하게 결제번호 저장
 
 ## Invoice
+- order 테이블로 상품결제 및 상품 정보 또는 수량등 order 정보 불러오기 가능
 
 
-## Nav/Footer 
 
 
