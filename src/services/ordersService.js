@@ -9,12 +9,12 @@ const placeOrder = async (userId) => {
     const carts = await cartInfo(userId);
 
     if (!carts) {
-      throw new Error("Invalid request parameters");
+      return { error: "Invalid request parameters" };
     }
 
     const user = await getUserById(userId);
     if (!user) {
-      throw new Error("User not found");
+      return { error: "User not found" };
     }
 
     let totalCartPrice = 0;
