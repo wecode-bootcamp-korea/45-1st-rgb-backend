@@ -4,21 +4,21 @@ const cartInfo = async (userId) => {
   try {
     return await dataSource.query(
       `SELECT 
-        carts.id,
-        carts.products_id ,
-        carts.quantity as count, 
-        products.title, 
-        products.products_size_left as width, 
-        products.products_size_right as height, 
-        products_images.image_url as image,
-        products.quantity as inventory, 
-        products.price as price 
-          FROM products 
-          JOIN carts ON carts.products_id = products.id 
-          JOIN products_images ON products.id = products_images.products_id
-          WHERE users_id = ?
-          GROUP BY products_id,products_images.image_url,carts.id
-      `,
+      carts.id,
+      carts.products_id ,
+      carts.quantity as count, 
+      products.title, 
+      products.products_size_left as width, 
+      products.products_size_right as height, 
+      JSON_ARRAYAGG(products_images.image_url) as images,
+      products.quantity as inventory, 
+      products.price as price 
+  FROM products 
+  JOIN carts ON carts.products_id = products.id 
+  JOIN products_images ON products.id = products_images.products_id
+  WHERE users_id = 37
+  GROUP BY carts.id, carts.products_id, products.title, products.products_size_left, products.products_size_right, products.quantity, products.price
+  `,
       [userId]
     );
   } catch (err) {

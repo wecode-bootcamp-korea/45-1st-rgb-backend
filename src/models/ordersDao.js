@@ -1,6 +1,12 @@
 const dataSource = require("../models/dataSource");
 
-const placeOrder = async (userId, orderStatusId, totalPrice, cartItems, orderNumber) => {
+const placeOrder = async (
+  userId,
+  orderStatusId,
+  totalPrice,
+  cartItems,
+  orderNumber
+) => {
   const queryRunner = dataSource.createQueryRunner();
 
   await queryRunner.connect();
@@ -19,7 +25,10 @@ const placeOrder = async (userId, orderStatusId, totalPrice, cartItems, orderNum
     );
 
     // Then, create order items for each item in the cart
-    const orderItemsWithOrderId = cartItems.map((item) => [createOrder.insertId, ...item]);
+    const orderItemsWithOrderId = cartItems.map((item) => [
+      createOrder.insertId,
+      ...item,
+    ]);
 
     await queryRunner.query(
       `INSERT INTO order_items (
@@ -36,11 +45,14 @@ const placeOrder = async (userId, orderStatusId, totalPrice, cartItems, orderNum
         [item[0]]
       );
       const newQuantity = product.quantity - item[1];
-      await queryRunner.query(`
+      await queryRunner.query(
+        `
         UPDATE products
         SET quantity = ?
         WHERE id = ?
-      `, [newQuantity, item[0]]);
+      `,
+        [newQuantity, item[0]]
+      );
     }
 
     const user = await dataSource.query(
@@ -50,7 +62,8 @@ const placeOrder = async (userId, orderStatusId, totalPrice, cartItems, orderNum
 
     if (user && user[0] && user[0].points) {
       // Deduct the total price from the user's points
-      await queryRunner.query(`
+      await queryRunner.query(
+        `
           UPDATE users 
           SET 
           points = ? 
@@ -60,9 +73,12 @@ const placeOrder = async (userId, orderStatusId, totalPrice, cartItems, orderNum
     }
 
     // Finally, delete the cart items
-    await queryRunner.query(`DELETE 
+    await queryRunner.query(
+      `DELETE 
               FROM carts
-              WHERE users_id = ?`, [userId]);
+              WHERE users_id = ?`,
+      [userId]
+    );
 
     await queryRunner.commitTransaction();
 
@@ -101,7 +117,6 @@ const getOrderData = async (orderId) => {
   WHERE o.uuid = ?`;
 
   const result = await dataSource.query(query, [orderId]);
-  console.log(result)
   if (!result || result.length === 0) {
     throw new Error("Order not found or invalid orderId");
   }
@@ -133,5 +148,5 @@ const getOrderData = async (orderId) => {
 
 module.exports = {
   placeOrder,
-  getOrderData
+  getOrderData,
 };
